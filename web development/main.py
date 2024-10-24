@@ -37,14 +37,10 @@ def dashboard():
 
 @app.route('/login/data')
 def send_data():
-
-    data = {
-        'cpu': psutil.cpu_percent(),
-        'net': 73,
-        'ram': psutil.virtual_memory().percent,
-        'rom': psutil.disk_usage('/').percent
-    }
-
+    data = {'cpu': psutil.cpu_percent(),
+            'ram': psutil.virtual_memory().percent, 
+            'rom': psutil.disk_usage('/').percent, 
+            'net': 73}
     return jsonify(data)
 
 if __name__ == '__main__':
