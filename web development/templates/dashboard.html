@@ -1,36 +1,74 @@
-<!-- index.html -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Dashboard</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Employee Dashboard - Cybersecurity</title>
+    <link rel="stylesheet" href="/static/dashboard.css">
 </head>
 <body>
-    <!-- Header Section -->
-    <header>
-        <nav>
-            <ul>
-                <li><a href="#">Dashboard</a></li>
-                <li><a href="#">Reports</a></li>
-                <li><a href="#">Settings</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <!-- Main Content Section -->
-    <main>
-        <section>
-            <h1>Welcome to the Dashboard</h1>
-            <p>This is a simple dashboard template.</p>
-        </section>
-    </main>
-
-    <!-- Footer Section -->
-    <footer>
-        <p>&copy; 2023 Simple Dashboard</p>
-    </footer>
+    <div class="container">
+        <div class="sidebar">
+            <div class="profile">
+                <img src="/static/images/Shusant.jpg" alt="Employee Photo" class="profile-picture">
+                <h2>Shushant Sonkusare</h2>
+                <p>Cybersecurity Analyst</p>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="active">Dashboard</a></li>
+                    <li><a href="#">Projects</a></li>
+                    <li><a href="#">Team</a></li>
+                    <li><a href="#">Reports</a></li>
+                    <li><a href="#">Settings</a></li>
+                </ul>
+            </nav>
+        </div>
+        <main>
+            <header>
+                <h1>Dashboard</h1>
+                <button class="btn">Generate Report</button>
+            </header>
+            <div class="dashboard-grid">
+                <div class="card work-schedule">
+                    <h3>Work Schedule</h3>
+                    <div id="calendar"></div>
+                </div>
+                <div class="card progress-card">
+                    <h3>Project Progress</h3>
+                    <div class="progress-bar">
+                        <div class="progress" id="project-progress"></div>
+                    </div>
+                    <p id="progress-text">0% Complete</p>
+                </div>
+                <div class="card graph-card">
+                    <h3>Network Usage</h3>
+                    <div class="circular-graph-container">
+                        <canvas id="network-usage"></canvas>
+                    </div>
+                </div>
+                <div class="card graph-card">
+                    <h3>CPU Usage</h3>
+                    <div class="circular-graph-container">
+                        <canvas id="cpu-usage"></canvas>
+                    </div>
+                </div>
+                <div class="card graph-card">
+                    <h3>Memory Usage</h3>
+                    <div class="circular-graph-container">
+                        <canvas id="memory-usage"></canvas>
+                    </div>
+                </div>
+                <div class="card graph-card">
+                    <h3>Misc Graph</h3>
+                    <div class="circular-graph-container">
+                        <canvas id="misc-graph"></canvas>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/static/dashboard.js"></script>
 </body>
 </html>

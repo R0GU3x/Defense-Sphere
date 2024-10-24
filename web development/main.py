@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
+import psutil
 
 app = Flask(__name__)
 
@@ -24,8 +25,27 @@ def login():
         email = request.form['email']
         password = request.form['password']
         if (email, password) == ('admin@gmail.com', 'admin'):
-            return render_template('dashboard.html')
+            # make the page route to dashboard.html
+            return redirect('dashboard')
+            # return render_template('dashboard.html')
+
     return render_template('login.html')
+
+@app.route('/dashboard')
+def dashboard():
+    return render_template('dashboard.html')
+
+@app.route('/login/data')
+def send_data():
+
+    data = {
+        'cpu': psutil.cpu_percent(),
+        'net': 73,
+        'ram': psutil.virtual_memory().percent,
+        'rom': psutil.disk_usage('/').percent
+    }
+
+    return jsonify(data)
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=False)
