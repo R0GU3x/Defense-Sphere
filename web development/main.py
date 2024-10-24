@@ -18,16 +18,13 @@ def article():
 def support():
     return render_template('support.html')
 
-#! ASK BURHAN TO SETUP POST METHOD FOR UPON SUBMIT
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
-        # You can add your authentication logic here
-        print(f"Email: {email}, Password: {password}")
-        return "Login successful!"
+        if (email, password) == ('admin@gmail.com', 'admin'):
+            return render_template('dashboard.html')
     return render_template('login.html')
 
 if __name__ == '__main__':
