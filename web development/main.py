@@ -24,6 +24,14 @@ def support():
 def dashboard():
     return render_template('dashboard.html')
 
+@app.route('/dashboard/data')
+def dasboard_data():
+    data = {'cpu': psutil.cpu_percent(),
+            'ram': psutil.virtual_memory().percent,
+            'rom': psutil.disk_usage('/').percent,
+            'net': 73}
+    return jsonify(data)
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -33,26 +41,23 @@ def login():
             userID = 13 # random invalid number
         password = request.form['password']
 
+        print(userID, password)
+
+        global response
         response = auth.login(userID, password)
 
         if response == 0:
             return redirect('dashboard')
         if response == 1:
+            # return login_data()
             pass
         
+
     return render_template('login.html')
 
 @app.route('/login/data')
 def login_data():
-    data = {1:2, 3:4}
-    return jsonify(data)
-
-@app.route('/dashboard/data')
-def dasboard_data():
-    data = {'cpu': psutil.cpu_percent(),
-            'ram': psutil.virtual_memory().percent,
-            'rom': psutil.disk_usage('/').percent,
-            'net': 73}
+    data = {'response':response}
     return jsonify(data)
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -62,12 +67,19 @@ def register():
         username = request.form['username']
         password = request.form['password']
 
+        global userID
         userID = auth.register(firstName, username, password)
         print(userID)
 
         return redirect('login')
 
+    # else:
     return render_template('register.html')
+
+@app.route('/register/data')
+def register_data():
+    data = {'userID':userID}
+    return jsonify(data)
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=False)

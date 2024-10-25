@@ -2,49 +2,35 @@ document.addEventListener("DOMContentLoaded", function() {
     const signInBtn = document.getElementById("sign-in-btn");
     const forgotPasswordLink = document.getElementById("forgot-password");
     const createAccountLink = document.getElementById("create-account");
-    const googleBtn = document.querySelector(".google-btn");
-    const microsoftBtn = document.querySelector(".microsoft-btn");
-    const emailInput = document.getElementById("email");
-    const passwordInput = document.getElementById("password");
 
-    signInBtn.addEventListener("click", function(event) {
+    async function handleSubmit(event) {
         event.preventDefault();
-        
-        fetch("/login/data")
+
+        const formData = new FormData(form);
+
+        // Prepare the data to be sent to the /login endpoint
+        const data = {};
+        formData.forEach((value, key) => {
+            data[key] = value;
+        });
+
+        // Send POST request to /login
+        const loginResponse = fetch('/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams(data)
+        });
+
+        await fetch("/login/data")
         .then(response => response.json())
         .then(data => {
             console.log(data);
         })
-
-        // collect json from /login/data that shows if the login is success or not
-        // fetch("/login/data", {
-        //     method: "POST",
-        //     headers: {
-        //         "Content-Type": "application/json"
-        //     },
-        //     body: JSON.stringify({ email, password })
-        // })
-        // .then(response => response.json())
-        // .then(data => {
-        //     console.log(data)
-        // });
-
-        // // fetch('/login/data')
-        // //     .then(response => response.json())
-        // //     .then(data => {
-        // //         console.log(data);
-        // //     });
-
-        // // Add your sign in logic here
-        // // For example, you can make an AJAX request to your server to verify the credentials
-        // fetch('/login', {method: 'POST'})
-        // .catch(error => {
-        //     console.log(error);
-        //     // Display an error message to the user
-        //     alert('ERROR signing in');
-        // });
         
-    });
+        return true;
+    }
 
     forgotPasswordLink.addEventListener("click", function(event) {
         event.preventDefault();

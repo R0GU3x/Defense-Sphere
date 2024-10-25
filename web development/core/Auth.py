@@ -7,9 +7,9 @@ try:
 except:
     import BlockchainTech as BC
 
-bc = BC.Blockchain()
-
 def login(id:int, password:str) -> int:
+
+    bc = BC.Blockchain()
 
     def hash_actions(hash:str):
         # open the json file and load the data
@@ -35,6 +35,9 @@ def login(id:int, password:str) -> int:
     return 2
 
 def register(name:str, username:str, password:str):
+
+    bc = BC.Blockchain()
+
     data = {'name': name, 'username': username, 'password': hashlib.sha256(password.encode()).hexdigest()}
     return bc.create_new_block(data)
 
