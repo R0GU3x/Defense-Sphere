@@ -1,4 +1,4 @@
-
+/* 
 body {
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
@@ -10,7 +10,7 @@ body {
 }
 
 .container {
-    width: 400px; /* Increased width to 400px */
+    width: 400px; /* Increased width to 400px ADD CLOSING COMMENT HERE WHEN THIS CODE IN USE
     padding: 30px;
     border: 1px solid #ddd;
     border-radius: 10px;
@@ -65,42 +65,105 @@ button[type="button"]:hover {
     text-decoration: underline;
 }
 
-.social-login-container {
-    margin-top: 20px;
+
+ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.social-login-btn {
-    width: 100%;
-    height: 40px;
-    margin-bottom: 10px;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f8ff;
     display: flex;
+    justify-content: center;
     align-items: center;
+    height: 100vh;
 }
 
-.social-login-btn img {
-    width: 20px;
-    height: 20px;
-    margin-right: 10px;
+.container {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
 }
 
-.google-btn {
-    background-color: #4285F4;
+.form-container {
+    width: 100%;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+.input-group {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+input {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #0056b3;
     color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
-.google-btn:hover {
-    background-color: #3367D6;
+button:hover {
+    background-color: #003d7a;
 }
 
-.microsoft-btn {
-    background-color: #F65314;
-    color: #fff;
+#login-link {
+    text-align: center;
+    margin-top: 1rem;
 }
 
-.microsoft-btn:hover {
-    background-color: #E44D2E;
+#login-link a {
+    color: #0056b3;
+    text-decoration: none;
+}
+
+#login-link a:hover {
+    text-decoration: underline;
+}
+
+#forgot-password, #create-account {
+    font-size: 14px;
+    color: black;
+    text-decoration: none;
+    margin-bottom: 15px;
+    text-align: center;
+    margin-top: 10 px;
+}
+
+a {
+    text-decoration: underline;
+}
+
+#create-account {
+    margin-bottom: 20 px;
+}
+
+#forgot-password {
+    padding-top: 10px;
 }
