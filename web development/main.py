@@ -52,7 +52,6 @@ def login():
             # return login_data()
             pass
         
-
     return render_template('login.html')
 
 @app.route('/login/data')
@@ -73,7 +72,6 @@ def register():
 
         return redirect('login')
 
-    # else:
     return render_template('register.html')
 
 @app.route('/register/data')

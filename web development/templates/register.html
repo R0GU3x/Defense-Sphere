@@ -9,7 +9,7 @@
 <body>
     <div class="container">
         <div class="form-container">
-            <form id="register-form" action="/register" method="post">
+            <form id="register-form" method="post" onsubmit="return handleSubmit(event)">
                 <h2>Employee Registration</h2>
                 
                 <input type="text" id="first-name" name="first-name" placeholder="First Name" required>

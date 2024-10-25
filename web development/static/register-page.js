@@ -1,38 +1,33 @@
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('register-form');
-    // const emailInput = document.getElementById('email');
-    // const passwordInput = document.getElementById('password');
 
+    async function handleSubmit(event) {
+        event.preventDefault();
 
-    form.addEventListener('submit', function(event) {
+        const formData = new FormData(form);
 
-        // alert(1)
+        // Prepare the data to be sent to the /login endpoint
+        const data = {};
+        formData.forEach((value, key) => {
+            data[key] = value;
+        });
 
-        fetch("/register/data")
+        // Send POST request to /login
+        const loginResponse = fetch('/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams(data)
+        });
+
+        await fetch("/register/data")
         .then(response => response.json())
         .then(data => {
-            console.log(data)
-            alert(1);
+            console.log(data);
         })
+        
+        return true;
+    }
 
-        // let isValid = true;
-
-        // // Validate email
-        // if (!emailInput.value.match(/[a-z0-9._%+-]+@company\.com$/)) {
-        //     alert('Please enter a valid company email address.');
-        //     isValid = false;
-        // }
-
-
-        // // Validate password
-        // if (passwordInput.value.length < 8) {
-        //     alert('Password must be at least 8 characters long.');
-        //     isValid = false;
-        // }
-
-
-        // if (!isValid) {
-        //     event.preventDefault();
-        // }
-    });
 });
