@@ -37,10 +37,9 @@ function createCircularGraphs() {
     const charts = {};
 
     function fetchData() {
-        fetch('/login/data')
+        fetch('/dashboard/data')
             .then(response => response.json())
             .then(data => {
-                console.log(data); // Log the data for debugging
 
                 const graphData = [
                     { id: 'network-usage', value: data.net || 75, color: '#FF6384', label: 'Network Usage' },

@@ -12,35 +12,34 @@ document.addEventListener("DOMContentLoaded", function() {
         const email = emailInput.value;
         const password = passwordInput.value;
 
-        // Add your sign in logic here
-        // For example, you can make an AJAX request to your server to verify the credentials
-        fetch('/login', {
-            method: 'POST',
+        // collect json from /login/data that shows if the login is success or not
+        fetch("/login/data", {
+            method: "POST",
             headers: {
-                'Content-Type': 'application/json'
+                "Content-Type": "application/json"
             },
-            body: JSON.stringify({
-                email: email,
-                password: password
-            })
+            body: JSON.stringify({ email, password })
         })
         .then(response => response.json())
         .then(data => {
-            if (data.success) {
-                console.log("Sign in successful");
-                // Redirect to the dashboard or home page
-                window.location.href = '/dashboard';
-            } else {
-                console.log("Invalid email or password");
-                // Display an error message to the user
-                alert("Invalid email or password");
-            }
-        })
+            console.log(data)
+        });
+
+        // fetch('/login/data')
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         console.log(data);
+        //     });
+
+        // Add your sign in logic here
+        // For example, you can make an AJAX request to your server to verify the credentials
+        fetch('/login', {method: 'POST'})
         .catch(error => {
             console.log(error);
             // Display an error message to the user
             alert('ERROR signing in');
         });
+        
     });
 
     forgotPasswordLink.addEventListener("click", function(event) {

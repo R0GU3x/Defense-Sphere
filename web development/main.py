@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 import psutil
+import core.Auth as auth
 
 app = Flask(__name__)
 
@@ -19,29 +20,54 @@ def article():
 def support():
     return render_template('support.html')
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
-        if (email, password) == ('admin@gmail.com', 'admin'):
-            # make the page route to dashboard.html
-            return redirect('dashboard')
-            # return render_template('dashboard.html')
-
-    return render_template('login.html')
-
 @app.route('/dashboard')
 def dashboard():
     return render_template('dashboard.html')
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        try:
+            userID = int(request.form['user-id'])
+        except:
+            userID = 13 # random invalid number
+        password = request.form['password']
+
+        response = auth.login(userID, password)
+
+        if response == 0:
+            return redirect('dashboard')
+        if response == 1:
+            pass
+        
+    return render_template('login.html')
+
 @app.route('/login/data')
-def send_data():
+def login_data():
+    data = {1:2, 3:4}
+    return jsonify(data)
+
+@app.route('/dashboard/data')
+def dasboard_data():
     data = {'cpu': psutil.cpu_percent(),
-            'ram': psutil.virtual_memory().percent, 
-            'rom': psutil.disk_usage('/').percent, 
+            'ram': psutil.virtual_memory().percent,
+            'rom': psutil.disk_usage('/').percent,
             'net': 73}
     return jsonify(data)
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        firstName = request.form['first-name']
+        username = request.form['username']
+        password = request.form['password']
+
+        userID = auth.register(firstName, username, password)
+        print(userID)
+
+        return redirect('login')
+
+    return render_template('register.html')
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=False)
