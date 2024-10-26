@@ -1,29 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Login-in DefenseSphere</title>
-        <link rel="stylesheet" href="static/login-page.css">
-        <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
-    </head>
-    <body>
-        <!--FORM START-->
-        <div class="container">
-            <div class="form-container">
-                <!-- <form id="login-form"> -->
-                <form id="login-form" method="post" onsubmit="return handleSubmit(event)">
-                    <h2>Login</h2>
-                    <input type="text" id="user-id" name="user-id" placeholder="User ID" required>
-                    <input type="password" id="password" name="password" placeholder="Password" required>
-                    <button id="sign-in-btn">Sign In</button>
-                    <p id="forgot-password"><a>Forgot Password?</a></p>
-                    <p id="create-account">Dont have an account? <a href="/register"> Sign up</a></p>
-                </form>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="/static/transition.css">
+</head>
+<body>
+    <div class="page-container">
+        <div class="login-container">
+            <div class="quote-section">
+                <div>
+                    <p class="quote-title"></p>
+                    <h2 class="quote-main">It takes 20 years to build a reputation and a few minutes of cyber-incident to ruin it.</h2>
+                    <p class="quote-text">-Stephane Nappo</p>
+                </div>
+            </div>
+            
+            <div class="login-section">
+                <div class="login-header">
+                    <h1>Welcome Back</h1>
+                    <p>Enter your email and password to access your account</p>
+                </div>
                 
+                <form id="login-form" method="post" onsubmit="return handleSubmit(event)">
+                    <div class="input-group">
+                        <input type="text" id="user-id" name="user-id" placeholder="User ID">
+                    </div>
+                    <div class="input-group">
+                        <input type="password" id="password" name="password" placeholder="Password">
+                    </div>
+                    
+                    <button type="submit" id="sign-in-btn">Sign In</button>
+                </form>
+                <p id="forgot-password"><a href="#">Forgot Password?</a></p>
+                <p class="signup-link" id="create-account">
+                    Don't have an account? <a href="/register" class="transition-link">Sign Up</a>
+                </p>
             </div>
         </div>
-        <script src="static/login-page.js"></script>
-
-    </body>    
+    </div>
+    <script src="static/login-page.js"></script>
+    <script src="/static/transition.js"></script>
+</body>
 </html>

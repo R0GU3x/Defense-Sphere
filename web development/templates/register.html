@@ -3,24 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - DefenseSphere</title>
-    <link rel="stylesheet" href="static/register-page.css">
+    <title>Registration Page</title>
+    <link rel="stylesheet" href="/static/transition.css">
 </head>
 <body>
-    <div class="container">
-        <div class="form-container">
-            <form id="register-form" method="post" onsubmit="return handleSubmit(event)">
-                <h2>Employee Registration</h2>
-                
-                <input type="text" id="first-name" name="first-name" placeholder="First Name" required>
-                <input type="username" id="username" name="username" placeholder="Username" required>
-                <input type="password" id="password" name="password" placeholder="Password" required>
-               
-                <button type="submit" id="register-btn">Register</button>
-                <p id="login-link"><a href="/login">Already have an account? Log in</a></p>
-            </form>
+    <div class="page-container">
+        <div class="registration-container">
+            <div class="registration-section">
+                <div class="registration-header">
+                    <h1>Employee Registration</h1>
+                </div>
+                <form id="register-form" method="post" onsubmit="return handleSubmit(event)">
+                    <div class="input-group">
+                        <input type="text" id="first-name" name="first-name" placeholder="First Name" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="username" id="username" name="username" placeholder="Username" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" id="password" name="password" placeholder="Password" required>
+                    </div>
+                    <button type="submit" id="register-btn">Create Your Account</button>
+                </form>
+                <div class="login-link">
+                    Already have an account? <a href="/login" class="transition-link">Sign In</a>
+                </div>
+            </div>
+            <div class="quote-section">
+                <div class="quote-content">
+                    <p class="quote-main">
+                        Security is not a product, but a process. It's not a destination, but a journey towards digital resilience.
+                    </p>
+                    <p class="quote-text">
+                        - Bruce Schneier
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
     <script src="static/register-page.js"></script>
+    <script src="/static/transition.js"></script>
 </body>
 </html>
