@@ -1,11 +1,13 @@
 import hashlib
 import json
 import base64
-
+import os
+# ==========================
 try:
     import core.BlockchainTech as BC
 except:
     import BlockchainTech as BC
+# ===========================
 
 def login(id:int, password:str) -> int:
 
@@ -39,6 +41,18 @@ def login(id:int, password:str) -> int:
 def register(name:str, username:str, password:str):
 
     bc = BC.Blockchain()
+
+    # check if the user alredy exists or not
+    usernames = []
+    for hashFile in os.listdir(rf'core\blocks'):
+        with open(rf'core\blocks\{hashFile}', 'rb') as f:
+            data = json.load(f)[str(0)]
+        
+        decrypt_data = eval(BC.sym.decrypt_data(base64.b64decode((data))))
+        usernames.append(decrypt_data['username'])
+    
+    if username in usernames:
+        return -1
 
     data = {'name': name, 'username': username, 'password': hashlib.sha256(password.encode()).hexdigest()}
     return bc.create_new_block(data)
