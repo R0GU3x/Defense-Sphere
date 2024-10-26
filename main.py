@@ -38,18 +38,17 @@ def login():
         try:
             userID = int(request.form['user-id'])
         except:
-            userID = 13 # random invalid number
+            userID = -1
         password = request.form['password']
-
-        # print(userID, password)
 
         global response, name, username
         response, name, username = auth.login(userID, password)
 
+        print(f'[~] Login Response Code: {response}')
+
         if response == 0:
             return redirect('dashboard')
         if response == 1:
-            # return login_data()
             pass
         
     return render_template('login.html')
