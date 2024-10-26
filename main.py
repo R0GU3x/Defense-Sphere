@@ -22,7 +22,7 @@ def support():
 
 @app.route('/dashboard')
 def dashboard():
-    return render_template('dashboard.html')
+    return render_template('dashboard.html', name=name)
 
 @app.route('/dashboard/data')
 def dasboard_data():
@@ -41,10 +41,10 @@ def login():
             userID = 13 # random invalid number
         password = request.form['password']
 
-        print(userID, password)
+        # print(userID, password)
 
-        global response
-        response = auth.login(userID, password)
+        global response, name, username
+        response, name, username = auth.login(userID, password)
 
         if response == 0:
             return redirect('dashboard')

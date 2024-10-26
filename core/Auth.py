@@ -20,19 +20,21 @@ def login(id:int, password:str) -> int:
         decrypt_data = eval(BC.sym.decrypt_data(base64.b64decode((data))))
         org_hash, new_hash = decrypt_data['password'], hashlib.sha256(password.encode()).hexdigest()
         
+        # print(decrypt_data)
+
         # compare the hashes
         if org_hash == new_hash:
             # sucess
-            return 0
+            return (0, decrypt_data['name'], decrypt_data['username'])
         # wrong password
-        return 1
+        return (1, None, None)
 
     for row in bc.hashmap:
         if row[0] == id:
             return hash_actions(row[1])
 
     # user not found
-    return 2
+    return (2, None, None)
 
 def register(name:str, username:str, password:str):
 
