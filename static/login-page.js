@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
 
         // Send POST request to /login
-        const loginResponse = fetch('/login', {
+        await fetch('/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
