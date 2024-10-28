@@ -1,33 +1,44 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Simulating user data
-    // document.getElementById('user-name').textContent = 'John Doe';
-
-    // Slider functionality
-    const slides = document.querySelectorAll('.slide');
-    const dotsContainer = document.querySelector('.slider-dots');
-    let currentSlide = 0;
-
-    // Create dots
-    slides.forEach((_, index) => {
-        const dot = document.createElement('div');
-        dot.classList.add('dot');
-        if (index === 0) dot.classList.add('active');
-        dot.addEventListener('click', () => goToSlide(index));
-        dotsContainer.appendChild(dot);
+    const ctx = document.getElementById('sales-chart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            datasets: [{
+                label: 'Sales 2021',
+                data: [65, 59, 80, 81, 56, 55, 40, 65, 59, 80, 81, 56],
+                borderColor: '#64ffda',
+                tension: 0.4,
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    },
+                    ticks: {
+                        color: '#ccd6f6'
+                    }
+                },
+                x: {
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    },
+                    ticks: {
+                        color: '#ccd6f6'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
     });
-
-    function goToSlide(n) {
-        slides[currentSlide].classList.remove('active');
-        document.querySelectorAll('.dot')[currentSlide].classList.remove('active');
-        currentSlide = (n + slides.length) % slides.length;
-        slides[currentSlide].classList.add('active');
-        document.querySelectorAll('.dot')[currentSlide].classList.add('active');
-    }
-
-    function nextSlide() {
-        goToSlide(currentSlide + 1);
-    }
-
-    // Auto-advance slides every 5 seconds
-    setInterval(nextSlide, 5000);
 });
+

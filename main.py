@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 import psutil
+import threading
 import core.Auth as auth
+import core.FileIntegrity as FI
 
 app = Flask(__name__)
 
@@ -78,5 +80,27 @@ def register_data():
     data = {'userID':userID}
     return jsonify(data)
 
+@app.route('/dashboard/FI-Monitor', methods=['GET'])
+def fi_monitoring():
+    id = request.args.get('task')
+    if id:
+        if id == 'add':
+            print(1)
+        elif id == 'clear':
+            print(2)
+        elif id == 'remove':
+            print(3)
+
+    return render_template('FI-Monitor.html')
+
+@app.route('/dashboard/FI-Monitor/data')
+def fi_data():
+    return jsonify(FI.DATA)
+    
+
 if __name__ == '__main__':
+
+    # real-time file monitoring
+    threading.Thread(target=FI.run).start()
+
     app.run(debug=True, use_reloader=False)
