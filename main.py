@@ -82,14 +82,20 @@ def register_data():
 
 @app.route('/dashboard/FI-Monitor', methods=['GET'])
 def fi_monitoring():
-    id = request.args.get('task')
-    if id:
-        if id == 'add':
-            print(1)
-        elif id == 'clear':
-            print(2)
-        elif id == 'remove':
-            print(3)
+    task, file = request.args.get('task'), request.args.get('file')
+    if task and file:
+        # file = file.replace('\\', '/')
+        if task == 'add':
+            FI.add(file)
+        elif task == 'clear':
+            FI.clear(file)
+        elif task == 'remove':
+            FI.remove(file)
+        elif task == 'pause':
+            FI.pause(file)
+        elif task == 'resume':
+            FI.resume(file)
+         
 
     return render_template('FI-Monitor.html')
 
@@ -97,7 +103,6 @@ def fi_monitoring():
 def fi_data():
     return jsonify(FI.DATA)
     
-
 if __name__ == '__main__':
 
     # real-time file monitoring

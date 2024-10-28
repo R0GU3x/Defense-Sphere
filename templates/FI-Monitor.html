@@ -9,17 +9,22 @@
 <body>
     <div class="container">
         <h1>FILE INTEGRITY MONITOR</h1>
+
         <div class="content-card">
-            <!-- Add your custom content here -->
             <h2>System Overview</h2>
-            <p>This File Integrity Monitor helps ensure the security and integrity of critical system files. It continuously monitors selected files for any unauthorized changes or modifications.</p>
+            <p>
+                This File Integrity Monitor helps ensure the security and integrity of
+                critical system files. It continuously monitors selected files for any
+                unauthorized changes or modifications.
+            </p>
             <p>Use the controls below to manage monitored files and view alerts.</p>
         </div>
-        <div class="file-list">
-            <!-- <input type="file" id="fileInput" multiple style="display: none;" /> -->
+
+        <div class="add-file-section">
+            <input type="text" id="filePathInput" class="file-path-input" placeholder="Specify Your File Path" />
             <button class="add-file-button" onclick="add_files()">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                     <polyline points="14 2 14 8 20 8"></polyline>
                     <line x1="12" y1="18" x2="12" y2="12"></line>
                     <line x1="9" y1="15" x2="15" y2="15"></line>
@@ -27,8 +32,13 @@
                 Add File
             </button>
         </div>
-    </div>
-    <script src="/static/FI-Monitor.js"></script>
 
+        <div class="file-list">
+            <!-- File items will be dynamically added here by Monitor.js -->
+        </div>
+    </div>
+
+    <input type="file" id="fileInput" style="display: none;" multiple>
+    <script src="/static/FI-Monitor.js"></script>
 </body>
 </html>

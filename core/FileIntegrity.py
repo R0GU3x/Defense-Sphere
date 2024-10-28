@@ -43,7 +43,7 @@ def remove(file):
     except Exception as e:
         pass
 
-def dealert(file):
+def clear(file):
     cur.execute(f'UPDATE hashes SET alert=0 WHERE file="{file}"')
 
 def pause(file):
