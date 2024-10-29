@@ -23,20 +23,12 @@ async function add_files(){
     // Remove popup after 3 seconds
     setTimeout(() => {
         popup.remove();
-        fetch('/reload');
     }, 1000);
  
 }
 
 //function for pause/resume button
 async function toggleState(button, count) {
-    // if (button.textContent === "Pause") {
-    //     button.textContent = "Resume";
-    //     button.style.backgroundColor = "#f44336";
-    // } else {
-    //     button.textContent = "Pause";
-    //     button.style.backgroundColor = "#4CAF50";
-    // }
     const data = await update_data()
     const [file, properties] = Object.entries(data)[count]
 
@@ -52,17 +44,6 @@ async function toggleState(button, count) {
         fetch(`/dashboard/FI-Monitor?task=pause&file=${encodeURIComponent(file)}`);
     }
 
-    // await fetch('/reload');
-    setTimeout(() => {
-        fetch('/reload');
-    }, 500);
-
-    // fetch('/your-endpoint')
-    // .then(response => response.json())
-    // .then(data => {
-    //     // Update your UI with the new data
-    // })
-    // .catch(error => console.error('Error:', error));
 }
 // Function to get files
 async function getFiles() {
@@ -89,13 +70,30 @@ async function getFiles() {
                 transition: background-color 0.3s;">${prTextContent}</button>`
         pr_buttons.push(pr_button)
         fileItem.innerHTML = `
-            <span class="file-name">${file}</span>
-            <span class="alert-count" style="background-color: ${alertBgColor}">Alert: ${properties.alert}</span>
-            <div class="action-buttons">
-                ${pr_button}
-                <button class="action-button clear-button" onclick="fetch('/dashboard/FI-Monitor?task=clear&file=${encodeURIComponent(file)}')">Clear</button>
-                <button class="action-button remove-button" onclick="fetch('/dashboard/FI-Monitor?task=remove&file=${encodeURIComponent(file)}')">Remove</button>
-            </div>`; 
+        <span class="file-name">
+            ${file}
+            <svg onclick="window.location.href='/dashboard/FI-Monitor?file=${encodeURIComponent(file)}&action=open'" 
+                    style="cursor: pointer; width: 20px; height: 20px; margin-left: 8px; vertical-align: middle; transition: stroke 0.3s ease;" 
+                    onmouseover="this.style.stroke='#4CAF50'" 
+                    onmouseout="this.style.stroke='currentColor'"
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    stroke-width="2" 
+                    stroke-linecap="round" 
+                    stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="12" y1="18" x2="12" y2="12"></line>
+                    <line x1="9" y1="15" x2="15" y2="15"></line>
+                </svg>
+        </span>
+        <span class="alert-count" style="background-color: ${alertBgColor}">Alert: ${properties.alert}</span>
+        <div class="action-buttons">
+            ${pr_button}
+            <button class="action-button clear-button" onclick="fetch('/dashboard/FI-Monitor?task=clear&file=${encodeURIComponent(file)}')">Clear</button>
+            <button class="action-button remove-button" onclick="fetch('/dashboard/FI-Monitor?task=remove&file=${encodeURIComponent(file)}')">Remove</button>
+        </div>`;
         fileList.appendChild(fileItem);
 
         count++;

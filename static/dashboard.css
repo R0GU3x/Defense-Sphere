@@ -27,27 +27,6 @@ header {
     justify-content: space-between;
     align-items: center;
 }
-
-.search-bar {
-    display: flex;
-    align-items: center;
-    background-color: var(--primary-color);
-    border-radius: 20px;
-    padding: 5px 15px;
-}
-
-.search-bar input {
-    background: none;
-    border: none;
-    color: var(--text-color);
-    padding: 5px;
-    font-size: 16px;
-}
-
-.search-bar input::placeholder {
-    color: var(--text-color-light);
-}
-
 .user-actions {
     display: flex;
     gap: 20px;
@@ -64,6 +43,48 @@ header {
 .user-actions button svg {
     width: 24px;
     height: 24px;
+}
+.icon-button {
+    background: none;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    color: var(--accent-color);
+    border-radius: 50%;
+    transition: background-color 0.3s;
+}
+
+.icon-button:hover {
+    background-color: rgba(15, 255, 179, 0.1);
+}
+
+.icon-button svg {
+    display: block;
+}
+.logout-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    color: var(--accent-color);
+    text-decoration: none;
+    border-radius: 20px;
+    transition: background-color 0.3s;
+}
+
+.logout-button:hover {
+    background-color: rgba(15, 255, 179, 0.1);
+}
+
+.logout-button span {
+    font-size: 14px;
+}
+
+.logout-button svg {
+    display: block;
 }
 
 .dashboard-grid {
@@ -144,7 +165,17 @@ header {
     border: 3px solid var(--accent-color);
     box-shadow: 0 0 15px var(--accent-color);
 }
+.linkedin-icon {
+    color: #0077b5;  /* LinkedIn blue color */
+    font-size: 24px;
+    text-decoration: none;
+    margin-top: 10px;
+    display: inline-block;
+}
 
+.linkedin-icon:hover {
+    color: #005582;  /* Darker shade for hover effect */
+}
 .additional-info {
     flex-basis: 100%;
     margin-top: 20px;

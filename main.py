@@ -5,10 +5,13 @@ import core.Auth as auth
 import core.FileIntegrity as FI
 import pyautogui
 import time
+import os
+import socket
 
 app = Flask(__name__)
 
 LOGGEDIN = False
+pyautogui.FAILSAFE = False
 
 @app.route('/')
 def home():
@@ -26,17 +29,16 @@ def article():
 def support():
     return render_template('support.html')
 
-@app.route('/dashboard', methods=['GET'])
+@app.route('/dashboard')
 def dashboard():
-    auth = request.args.get('auth')
-    if auth:
-        return render_template('dashboard.html', name=name)
+    if LOGGEDIN:
+        return render_template('dashboard.html', name=name, userid=userID)
     else:
-        return abort(403)
+        return redirect('/login')
 
 @app.route('/dashboard/data')
 def dasboard_data():
-    data = {'cpu': psutil.cpu_percent(),
+    data = {'ip': socket.gethostbyname(socket.gethostname()),
             'ram': psutil.virtual_memory().percent,
             'rom': psutil.disk_usage('/').percent,
             'net': 73}
@@ -44,6 +46,7 @@ def dasboard_data():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    global userID
     if request.method == 'POST':
         try:
             userID = int(request.form['user-id'])
@@ -60,8 +63,11 @@ def login():
             return redirect('dashboard')
         if response == 1:
             pass
-        
-    return render_template('login.html')
+    
+    if not LOGGEDIN:
+        return render_template('login.html')
+    else:
+        return redirect('/dashboard')
 
 @app.route('/login/data')
 def login_data():
@@ -93,24 +99,28 @@ def register_data():
 def fi_monitoring():
     if LOGGEDIN:
         task, file = request.args.get('task'), request.args.get('file')
+        file, action = request.args.get('file'), request.args.get('action')
+
         if task and file:
             if task == 'add':
                 FI.add(file)
             elif task == 'clear':
                 FI.clear(file)
-                for _ in range (2):
-                    time.sleep(1)
-                    manual_reload()
             elif task == 'remove':
                 FI.remove(file)
-                for _ in range (2):
-                    time.sleep(1)
-                    manual_reload()
             elif task == 'pause':
                 FI.pause(file)
             elif task == 'resume':
-                FI.resume(file)         
+                FI.resume(file)
+            # -------------------------
+            return redirect('/dashboard/FI-Monitor')
 
+        elif file and action:
+            if action == 'open':
+                os.startfile(file)
+            # --------------------------
+            return redirect('/dashboard/FI-Monitor')
+        
         return render_template('FI-Monitor.html')
     
     else:
@@ -123,10 +133,19 @@ def fi_data():
     else:
         abort(403)
 
-@app.route('/reload', methods=['GET'])
-def manual_reload():
-    pyautogui.press('f5')
-    return jsonify(1)
+@app.route('/logout')
+def logout():
+    global LOGGEDIN
+    if LOGGEDIN:
+        LOGGEDIN = False
+    return redirect('/login')
+
+# @app.route('/dashboard/profile')
+# def profile():
+#     if LOGGEDIN:
+#         return render_template('Profile.html')
+#     else:
+#         return redirect('/login')
 
 if __name__ == '__main__':
 

@@ -27,9 +27,12 @@ def _hash_file(file:str):
 
 def _check_integrity(file:str, hash:str) -> bool:
     
-    if hash == _hash_file(file):
-        return True
-    return False
+    try:
+        if hash == _hash_file(file):
+            return True
+        return False
+    except Exception as e:
+        remove(file)
 
 def add(file:str) -> int:
     try:
@@ -48,8 +51,6 @@ def clear(file):
     newHash = _hash_file(file)
     cur.execute(f'UPDATE hashes SET alert=0, hash="{newHash}" WHERE file="{file}"')
 
-    # cur.execute(f'UPDATE hashes SET hash="{newHash}" WHERE file="{file}"')
-
 def pause(file):
     cur.execute(f'UPDATE hashes SET pause=1 WHERE file="{file}"')
 
@@ -59,7 +60,7 @@ def resume(file):
     newHash = _hash_file(file)
     cur.execute(f'UPDATE hashes SET hash="{newHash}" WHERE file="{file}"')
 
-def voice_alert(s):
+def voice_alert(s='File Breach Detected! Immediate attention recommended!'):
     engine = pyttsx3.init()
     voices = engine.getProperty('voices')
     engine.setProperty('voice', voices[1].id)
@@ -75,6 +76,6 @@ def run():
             DATA[file] = {'alert':alert, 'pause':pause}
             if (not pause) and (not _check_integrity(file, hash)) and alert==0:
                 cur.execute(f'UPDATE hashes SET alert=1 WHERE file="{file}"')
-                voice_alert('File Breach Detected! Immediate attention recommended!')            
+                voice_alert()
 
         time.sleep(2)
