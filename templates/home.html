@@ -1,31 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DefenseSphere - Advanced Cybersecurity Solutions</title>
-    <link rel="stylesheet" href="static/styles.css">
-    <!-- <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script> -->
-</head>
-<body>
-    <header id="navbar">
-        <div class="container">
-            <div class="logo">
-                <img src="static/images/shieldLogo1.png" alt="DefenseSphere Logo">
-                <h1>DefenseSphere</h1>
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/about-us">About us</a></li>
-                    <li><a href="/article">Articles</a></li>
-                    <li><a href="/support">Support</a></li>
-                    <li><a href="/login">Log In</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
+{% extends "base.html" %}
 
+
+
+{% block content %}
+<title>DefenseSphere</title>
+<link rel="stylesheet" href="/static/styles.css">
     <main>
         <section id="hero">
             <div class="container">
@@ -155,47 +134,6 @@
             </div>
         </section>
     </main>
-
-    <footer>
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-column">
-                    <h4>Products</h4>
-                    <ul>
-                        <li><a href="#">Antivirus</a></li>
-                        <li><a href="#">VPN</a></li>
-                        <li><a href="#">Password Manager</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h4>Solutions</h4>
-                    <ul>
-                        <li><a href="home.html">For Home</a></li>
-                        <li><a href="#">For Business</a></li>
-                        <li><a href="#">For Enterprise</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h4>Support</h4>
-                    <ul>
-                        <li><a href="#">Help Center</a></li>
-                        <li><a href="#">Contact Us</a></li>
-                        <li><a href="#">Community</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h4>Company</h4>
-                    <ul>
-                        <li><a href="#">About Us</a></li>
-                        <li><a href="#">Careers</a></li>
-                        <li><a href="#">Press</a></li>
-                    </ul>
-                </div>
-            </div>
-            <p class="copyright">&copy; 2023 DefenseSphere. All rights reserved.</p>
-        </div>
-    </footer>
-
     <script src="/static/script.js"></script>
 </body>
-</html>
+{% endblock content %}

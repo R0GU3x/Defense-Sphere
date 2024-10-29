@@ -1,6 +1,7 @@
 import sqlite3 as sql
 import hashlib
 import time
+import pyttsx3
 
 def _database_and_table_handler():
     global con, cur
@@ -44,7 +45,10 @@ def remove(file):
         pass
 
 def clear(file):
-    cur.execute(f'UPDATE hashes SET alert=0 WHERE file="{file}"')
+    newHash = _hash_file(file)
+    cur.execute(f'UPDATE hashes SET alert=0, hash="{newHash}" WHERE file="{file}"')
+
+    # cur.execute(f'UPDATE hashes SET hash="{newHash}" WHERE file="{file}"')
 
 def pause(file):
     cur.execute(f'UPDATE hashes SET pause=1 WHERE file="{file}"')
@@ -55,13 +59,22 @@ def resume(file):
     newHash = _hash_file(file)
     cur.execute(f'UPDATE hashes SET hash="{newHash}" WHERE file="{file}"')
 
+def voice_alert(s):
+    engine = pyttsx3.init()
+    voices = engine.getProperty('voices')
+    engine.setProperty('voice', voices[1].id)
+    engine.setProperty('rate', 120)
+    engine.say(s)        
+    engine.runAndWait()
+
 def run():
     global DATA
     while True:
         DATA, data = dict(), _fetch_data()
         for (file, hash, alert, pause) in data:
             DATA[file] = {'alert':alert, 'pause':pause}
-            if (not pause) and (not _check_integrity(file, hash)):
-                cur.execute(f'UPDATE hashes SET alert=1 WHERE file="{file}"')                
+            if (not pause) and (not _check_integrity(file, hash)) and alert==0:
+                cur.execute(f'UPDATE hashes SET alert=1 WHERE file="{file}"')
+                voice_alert('File Breach Detected! Immediate attention recommended!')            
 
-        time.sleep(0.5)
+        time.sleep(2)

@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 if (data.response === 0) {
                     showMessage("Login successful", "success");
                     setTimeout(() => {
-                        window.location.href = '/dashboard'; // Redirect to dashboard after successful login
+                        window.location.href = '/dashboard?auth=1';
                     }, 1500);
                 } else {
                     showMessage("Invalid credentials", "error");

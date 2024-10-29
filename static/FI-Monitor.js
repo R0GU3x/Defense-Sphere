@@ -23,7 +23,9 @@ async function add_files(){
     // Remove popup after 3 seconds
     setTimeout(() => {
         popup.remove();
-    }, 3000);
+        fetch('/reload');
+    }, 1000);
+ 
 }
 
 //function for pause/resume button
@@ -49,6 +51,11 @@ async function toggleState(button, count) {
         button.style.backgroundColor = "#4CAF50";
         fetch(`/dashboard/FI-Monitor?task=pause&file=${encodeURIComponent(file)}`);
     }
+
+    // await fetch('/reload');
+    setTimeout(() => {
+        fetch('/reload');
+    }, 500);
 
     // fetch('/your-endpoint')
     // .then(response => response.json())

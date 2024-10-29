@@ -1,5 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
+
+{% block title %}Articles - DefenseSphere{% endblock %}
+
+{% block content %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,12 +10,23 @@
     <link rel="stylesheet" href="static/article.css">
 </head>
 <body>
+    <section class="hero-article">
+        <div class="container">
+            <div class="hero-content">
+                <span class="article-tag">News</span>
+                <span class="read-time">3 mins read</span>
+                <h1>Verizon 2024 Data Breach Report shows the risk of the human element</h1>
+                <p>Latest news on cybersecurity, including data breaches, security vulnerabilities, cyberattacks, malware and phishing attacks, data privacy and compliance, cybersecurity conferen....</p>
+                <a href="#" class="hero-read-more">Read More →</a>
+            </div>
+        </div>
+    </section>
+
     <section class="article-showcase">
         <div class="container">
-            <header class="showcase-header">
-                <h2>Learn more from our experts</h2>
-                <p>Get tips and advice for staying safe online.</p>
-            </header>
+            <h2 class="section-title">Our Recent Articles</h2>
+            <p class="section-subtitle">Stay Informed with Our Latest Insights</p>
+            
             <div class="article-grid">
                 <article class="article-card">
                     <img src="static/images/Korean Hacker.jpg" alt="Family using technology">
@@ -72,4 +86,4 @@
         </div>
     </section>
 </body>
-</html>
+{% endblock %}
