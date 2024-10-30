@@ -1,0 +1,87 @@
+:root {
+    --primary-color: #1a1a2e;
+    --secondary-color: #16213e;
+    --accent-color: #0fffb3;
+    --text-color: #0fffb3;
+    --text-color-light: #8892b0;
+}
+
+header {
+    background-color: var(--secondary-color);
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+header h1{
+    color: #0fffb3;
+}
+.base-logo {
+    display: flex;
+    align-items: center;
+    height: 0px;
+}
+
+.base-logo img {
+    margin-right: 20px;
+    width: 40px;
+}
+.user-actions {
+    display: flex;
+    gap: 20px;
+}
+
+.user-actions button {
+    background: none;
+    border: none;
+    color: var(--accent-color);
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.user-actions button svg {
+    width: 24px;
+    height: 24px;
+}
+.icon-button {
+    background: none;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    color: var(--accent-color);
+    border-radius: 50%;
+    transition: background-color 0.3s;
+}
+
+.icon-button:hover {
+    background-color: rgba(15, 255, 179, 0.1);
+}
+
+.icon-button svg {
+    display: block;
+}
+.logout-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    color: var(--accent-color);
+    text-decoration: none;
+    border-radius: 20px;
+    transition: background-color 0.3s;
+}
+
+.logout-button:hover {
+    background-color: rgba(15, 255, 179, 0.1);
+}
+
+.logout-button span {
+    font-size: 14px;
+}
+
+.logout-button svg {
+    display: block;
+}

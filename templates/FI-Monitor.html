@@ -1,12 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>File Integrity Monitor</title>
+{% extends "base-dashboard.html" %}
+
+{% block title %}File Integrity Monitor{% endblock %}
+
+{% block extra_css %}
     <link rel="stylesheet" href="/static/FI-Monitor.css">
-</head>
-<body>
+{% endblock %}
+
+{% block content %}
     <div class="container">
         <h1>FILE INTEGRITY MONITOR</h1>
 
@@ -40,6 +40,8 @@
     </div>
 
     <input type="file" id="fileInput" style="display: none;" multiple>
-    <script src="/static/FI-Monitor.js"></script>
-</body>
-</html>
+    {% endblock %}
+
+    {% block scripts %}
+        <script src="/static/FI-Monitor.js"></script>
+    {% endblock %}

@@ -1,4 +1,75 @@
-<!DOCTYPE html>
+{% extends "base-dashboard.html" %}
+{% block title %}DefenseSphere Employee Dashboard{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="/static/dashboard.css">
+<body>
+    <div class="container">
+        <div class="stats-container">
+            <div class="stat-card">
+            <h3 id="todays-money">$0</h3>
+                <p>Private IPv4</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="todays-users">0</h3>
+            <p>Today's Users</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="new-clients">0</h3>
+                <p>New Clients</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="total-sales">$0</h3>
+                <p>Total Sales</p>
+            </div>
+        </div>
+        <div class="dashboard-grid">
+            <div class="card welcome-card">
+                <div class="welcome-text">
+                    <h2>Welcome, <span id="user-name">{{ name }}</span></h2>
+                <p>Cybersecurity Analyst</p>
+                <p style="color: #0fffb3; font-weight: 500;">ID: {{ userid }}</p>
+            </div>
+            <img src="/static/images/avatar/anonymous.png" alt="Employee Photo" class="profile-picture">
+        </div>
+        <a href="/dashboard/profile" class="card">
+            <h3>My Profile</h3>
+            <p>View and edit your account info</p>
+        </a>
+        <a href="/dashboard/FI-Monitor" class="card">
+            <h3>File Integrity Monitoring</h3>
+            <p>Manage and Edit files</p>
+        </a>
+        <a href="/EForums" class="card">
+            <h3>Employee Forums</h3>
+            <p>Get answers from other Employees</p>
+        </a>
+        <a href="/Training" class="card">
+            <h3>Training</h3>
+            <p>Access your training modules</p>
+        </a>
+        <a href="/SecAlerts" class="card">
+            <h3>Security Alerts</h3>
+            <p>View recent security notifications</p>
+        </a>
+        <a href="/Performance" class="card">
+            <h3>Performance</h3>
+            <p>Monitor your work performance</p>
+        </a>
+    </div>  
+    <div class="chart-container">
+        <h3>Global Cyber Crime Overview</h3>
+        <canvas id="sales-chart"></canvas>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/static/dashboard.js"></script>
+</body>
+{% endblock %}
+
+
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -93,4 +164,4 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="/static/dashboard.js"></script>
 </body>
-</html>
+</html> -->

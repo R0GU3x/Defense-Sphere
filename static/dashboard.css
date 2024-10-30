@@ -19,74 +19,6 @@ body {
     margin: 0 auto;
     padding: 20px;
 }
-
-header {
-    background-color: var(--secondary-color);
-    padding: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.user-actions {
-    display: flex;
-    gap: 20px;
-}
-
-.user-actions button {
-    background: none;
-    border: none;
-    color: var(--accent-color);
-    cursor: pointer;
-    font-size: 20px;
-}
-
-.user-actions button svg {
-    width: 24px;
-    height: 24px;
-}
-.icon-button {
-    background: none;
-    border: none;
-    padding: 8px;
-    cursor: pointer;
-    color: var(--accent-color);
-    border-radius: 50%;
-    transition: background-color 0.3s;
-}
-
-.icon-button:hover {
-    background-color: rgba(15, 255, 179, 0.1);
-}
-
-.icon-button svg {
-    display: block;
-}
-.logout-button {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: none;
-    border: none;
-    padding: 8px 16px;
-    cursor: pointer;
-    color: var(--accent-color);
-    text-decoration: none;
-    border-radius: 20px;
-    transition: background-color 0.3s;
-}
-
-.logout-button:hover {
-    background-color: rgba(15, 255, 179, 0.1);
-}
-
-.logout-button span {
-    font-size: 14px;
-}
-
-.logout-button svg {
-    display: block;
-}
-
 .dashboard-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -205,7 +137,7 @@ header {
 
 .stat-card h3 {
     margin: 0;
-    font-size: 24px;
+    font-size: 18px;
     color: var(--accent-color);
 }
 

@@ -23,9 +23,9 @@ def abuse_detection(ip):
     # Formatted output
     decodedResponse = json.loads(response.text)
     print(decodedResponse)
-    score = decodedResponse['data']['abuseConfidenceScore']
+    data = decodedResponse['data']['abuseConfidenceScore']
 
-    return score
+    return data
 
 
 errorIPs = []
@@ -48,8 +48,9 @@ def packet_callback(packet:sc.Packet):
         ip = (packet[layer2].src, packet[layer2].dst) [(packet[layer1].sport, packet[layer1].dport).index(443)]
 
         if ip not in errorIPs:
-            score = abuse_detection(ip)
-            print('='*50)
+            # data = abuse_detection(ip) if socket.gethostbyaddr(ip) else 0
+            data = socket.gethostbyaddr(ip)
+            print(data+'\n='*50)
 
     except Exception as e:
         errorIPs.append(ip)

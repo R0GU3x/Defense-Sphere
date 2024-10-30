@@ -55,7 +55,16 @@ async function getFiles() {
     for (const [file, properties] of Object.entries(files)) {
         const fileItem = document.createElement('div');
         fileItem.className = 'file-item';
-        const alertBgColor = properties.alert === 0 ? '#4CAF50' : '#e74c3c';
+        // const alertBgColor = properties.alert === 0 ? '#4CAF50' : '#e74c3c';
+
+        let alertBgColor, alertValue;
+        if (properties.alert === 0) {
+            alertBgColor = '#4CAF50'
+            alertValue = 'All good'
+        } else {
+            alertBgColor = '#e74c3c'
+            alertValue = 'Alert'
+        }
 
         const prBgColor = properties.pause === 1 ? "#f44336" : "#4CAF50"
         const prTextContent = properties.pause === 1 ? "Resume" : "Pause"
@@ -70,11 +79,11 @@ async function getFiles() {
                 transition: background-color 0.3s;">${prTextContent}</button>`
         pr_buttons.push(pr_button)
         fileItem.innerHTML = `
-        <span class="file-name">
+        <span class="file-name" style="color: white">
             ${file}
             <svg onclick="window.location.href='/dashboard/FI-Monitor?file=${encodeURIComponent(file)}&action=open'" 
-                    style="cursor: pointer; width: 20px; height: 20px; margin-left: 8px; vertical-align: middle; transition: stroke 0.3s ease;" 
-                    onmouseover="this.style.stroke='#4CAF50'" 
+                    style="cursor: pointer; color:0fffb3; width: 20px; height: 20px; margin-left: 8px; vertical-align: middle; transition: stroke 0.3s ease;" 
+                    onmouseover="this.style.stroke='white'" 
                     onmouseout="this.style.stroke='currentColor'"
                     viewBox="0 0 24 24" 
                     fill="none" 
@@ -88,7 +97,7 @@ async function getFiles() {
                     <line x1="9" y1="15" x2="15" y2="15"></line>
                 </svg>
         </span>
-        <span class="alert-count" style="background-color: ${alertBgColor}">Alert: ${properties.alert}</span>
+        <span class="alert-count" style="background-color: ${alertBgColor}">${alertValue}</span>
         <div class="action-buttons">
             ${pr_button}
             <button class="action-button clear-button" onclick="fetch('/dashboard/FI-Monitor?task=clear&file=${encodeURIComponent(file)}')">Clear</button>

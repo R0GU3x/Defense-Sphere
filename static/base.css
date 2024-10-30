@@ -26,12 +26,12 @@ header .base-container {
 .base-logo {
     display: flex;
     align-items: center;
-    height: 30px;
+    height: 0px;
 }
 
 .base-logo img {
     margin-right: 10px;
-    width: 180px;
+    width: 40px;
 }
 
 header h1 {
