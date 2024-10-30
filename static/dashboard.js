@@ -26,7 +26,101 @@ async function fetchDashboardData() {
     document.getElementById('new-clients').textContent = dashboardData.newClients.toLocaleString();
     document.getElementById('total-sales').textContent = `$${dashboardData.totalSales.toLocaleString()}`;
 }
+// VAlidity function
 
+function switchValidator(index) {
+    // Update wrapper position
+    const wrapper = document.querySelector('.validator-wrapper');
+    wrapper.style.transform = `translateX(-${index * 33.333}%)`;
+    
+    // Update dots
+    const dots = document.querySelectorAll('.dot');
+    dots.forEach(dot => dot.classList.remove('active'));
+    dots[index].classList.add('active');
+}
+
+function validateEmail() {
+    const email = document.getElementById('emailInput').value;
+    const resultDiv = document.getElementById('emailResult');
+
+    fetch('/dashboard/validate', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({email: email})
+    })
+
+    .then(response => response.json())
+    .then(data => {
+        console.log(data)
+        if (data === 1) {
+            resultDiv.innerHTML = `<span style="color: #0fffb3">✓ Valid email  address</span>`;
+        } else{
+            resultDiv.innerHTML = `<span style="color: #ff4d4d">✗ Invalid email address</span>`;
+        }
+    })
+}
+
+function validatePhone() {
+    const country = document.getElementById('countryCode').value;
+    const phone = document.getElementById('phoneInput').value;
+    const resultDiv = document.getElementById('phoneResult');
+    
+    // if (phoneRegex.test(phone)) {
+    //     resultDiv.innerHTML = `<span style="color: #0fffb3">✓ Valid phone number</span>`;
+    // } else {
+    //     resultDiv.innerHTML = `<span style="color: #ff4d4d">✗ Invalid phone number</span>`;
+    // }
+
+    fetch('/dashboard/validate', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({country: country, phone: phone})
+    })
+
+    .then(response => response.json())
+    .then(data => {
+        console.log(data)
+        if (data === 1) {
+            resultDiv.innerHTML = `<span style="color: #0fffb3">✓ Valid Phone Number</span>`;
+        } else{
+            resultDiv.innerHTML = `<span style="color: #ff4d4d">✗ Invalid Phone Number</span>`;
+        }
+    })
+
+}
+
+function validateIBAN() {
+    const iban = document.getElementById('ibanInput').value.replace(/\s/g, '');
+    const resultDiv = document.getElementById('ibanResult');
+    
+    // if (ibanRegex.test(iban)) {
+    //     resultDiv.innerHTML = `<span style="color: #0fffb3">✓ Valid IBAN format</span>`;
+    // } else {
+    //     resultDiv.innerHTML = `<span style="color: #ff4d4d">✗ Invalid IBAN format</span>`;
+    // }
+
+    fetch('/dashboard/validate', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({iban: iban})
+    })
+
+    .then(response => response.json())
+    .then(data => {
+        console.log(data)
+        if (data === 1) {
+            resultDiv.innerHTML = `<span style="color: #0fffb3">✓ Valid IBAN </span>`;
+        } else{
+            resultDiv.innerHTML = `<span style="color: #ff4d4d">✗ Invalid IBAN </span>`;
+        }
+    })
+}
 function createSalesChart() {
     const ctx = document.getElementById('sales-chart').getContext('2d');
     new Chart(ctx, {

@@ -1,6 +1,13 @@
+:root {
+    --primary-color: #1a1a2e;
+    --secondary-color: #16213e;
+    --accent-color: #0fffb3;
+    --text-color: #0fffb3;
+    --text-color-light: #8892b0;
+}
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #16213e;
+    background-color: #1a1a2e;
     margin: 0;
     padding: 20px;
     color: #8892b0;
@@ -22,12 +29,11 @@ h2 {
 }
 
 .content-card {
-    background-color: rgba(30, 27, 75, 0.7);
-    border-radius: 8px;
+    background-image: linear-gradient(to right, var(--secondary-color), var(--primary-color));
+    border-radius: 16px;
     color: white;
     justify-content: stretch;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding: 4px 10px;
 }
     
 .file-list {
@@ -135,11 +141,11 @@ h2 {
 .file-path-input {
     flex-grow: 1;
     padding: 8px 12px;
-    border: 1px solid #8892b0;
-    border-radius: 6px;
+    background-color: rgba(15, 255, 179, 0.1);
+    border: 1px solid var(--accent-color);
+    border-radius: 5px;
     font-size: 14px;
     color: white;
-    background-color: #16213e;
 }
 
 .file-path-input::placeholder {
