@@ -6,20 +6,23 @@
     <div class="container">
         <div class="stats-container">
             <div class="stat-card">
-            <h3 id="todays-money">$0</h3>
-                <p>Private IPv4</p>
+                <h3 id="ip">loading...</h3>
+                <p class="cntry-rgn"><b>Country: </b><span id="user-country">Loading...</span></p>
+                <p class="cntry-rgn"><b>Region: </b><span id="user-region">Loading...</span></p>
             </div>
             <div class="stat-card">
                 <h3 id="todays-users">0</h3>
-            <p>Today's Users</p>
+                <p></p>
+                <p>Today's Users</p>
             </div>
             <div class="stat-card">
                 <h3 id="new-clients">0</h3>
+                <p></p>
                 <p>New Clients</p>
             </div>
-            <div class="stat-card">
-                <h3 id="total-sales">$0</h3>
-                <p>Total Sales</p>
+            <div class="stat-card" onclick="toggleVPN()" style="cursor: pointer;">
+                <h3 id="vpn">Not Connected</h3>
+                <p>VPN</p>
             </div>
         </div>
         <div class="dashboard-grid">
@@ -157,9 +160,14 @@
         <h3>Global Cyber Crime Overview</h3>
         <canvas id="sales-chart"></canvas>
     </div>
+    <div id="vpn-popup" class="popup">
+        <p>Connecting VPN, please do not close Terminal.</p>
+        <p></p>To disconnect: Close Terminal</p>
+    </div>
 {% endblock %}
 
 {% block scripts %}
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="/static/dashboard.js"></script>
 </body>

@@ -14,20 +14,91 @@ async function fetchDashboardData() {
     
     console.log(data)
     const dashboardData = {
-        todaysMoney: data.ip,
+        ip: 0,
         todaysUsers: 670,
-        newClients: 809,
-        totalSales: 7
+        newClients: 809
+        //vpnConnection: "Connected"
     };
 
     // Update the HTML with the fetched data
-    document.getElementById('todays-money').textContent = `${dashboardData.todaysMoney.toLocaleString()}`;
+    // document.getElementById('ip').textContent = `${dashboardData.ip.toLocaleString()}`;
     document.getElementById('todays-users').textContent = dashboardData.todaysUsers.toLocaleString();
     document.getElementById('new-clients').textContent = dashboardData.newClients.toLocaleString();
-    document.getElementById('total-sales').textContent = `$${dashboardData.totalSales.toLocaleString()}`;
+    // document.getElementById('vpn').textContent = `${dashboardData.vpnConnection.toLocaleString()}`;
 }
-// VAlidity function
+// //VPN funtion
+// async function toggleVPN() {
+//     const currentVpnLabel = document.getElementById('vpn').textContent
+//     // Add VPN logic here
+//     document.getElementById('vpn').textContent = 'Processing...';
+    
+//         if (currentVpnLabel === 'Not Connected') {
+//             postData = 1;
+//         } else {
+//             postData = 0;
+//             document.getElementById('vpn').textContent = 'Not Connected';
+//         }
 
+//         await fetch('/vpn', {
+//                 method: 'POST',
+//                 headers: {'Content-Type': 'application/json'},
+//                 body: JSON.stringify(postData),
+//         })
+//         .then(response => response.json())
+//         .then(data => {
+//             document.getElementById('vpn').textContent = 'Connected';
+//             setUserLocation(data);
+//         })
+            
+//     }
+
+// Modify the existing toggleVPN function
+async function toggleVPN() {
+    const vpnElement = document.getElementById('vpn');
+    const currentVpnLabel = vpnElement.textContent;
+    vpnElement.textContent = 'Processing...';
+    
+    let postData;
+    if (currentVpnLabel === 'Not Connected') {
+        postData = 1;
+        showPopup();
+    } else {
+        postData = 0;
+        vpnElement.textContent = 'Not Connected';
+    }
+
+    try {
+        const response = await fetch('/vpn', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(postData),
+        });
+        const data = await response.json();
+        vpnElement.textContent = postData === 1 ? 'Connected' : 'Not Connected';
+        setUserLocation(data);
+    } catch (error) {
+        console.error('Error toggling VPN:', error);
+        vpnElement.textContent = currentVpnLabel;
+    }
+}
+
+// Add this new function to handle the popup
+function showPopup() {
+    const popup = document.getElementById('vpn-popup');
+    popup.classList.add('show');
+    setTimeout(() => {
+        popup.classList.remove('show');
+    }, 8000);
+}
+
+// Make sure this event listener is added to ensure the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', function() {
+    const vpnCard = document.querySelector('.stat-card[onclick="toggleVPN()"]');
+    if (vpnCard) {
+        vpnCard.addEventListener('click', toggleVPN);
+    }
+});
+// VAlidity function
 function switchValidator(index) {
     // Update wrapper position
     const wrapper = document.querySelector('.validator-wrapper');
@@ -121,6 +192,28 @@ function validateIBAN() {
         }
     })
 }
+
+function setUserLocation(data) {
+    document.getElementById('ip').textContent = data.query;
+    document.getElementById('user-country').textContent = data.country;
+    document.getElementById('user-region').textContent = data.regionName + ', ' + data.city;
+}
+
+// Call this when the document loads
+document.addEventListener('DOMContentLoaded', async function() {
+    // setUserLocation(data);
+    await fetch('/vpn', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(0),
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+        setUserLocation(data);
+    })
+});
+
 function createSalesChart() {
     const ctx = document.getElementById('sales-chart').getContext('2d');
     new Chart(ctx, {

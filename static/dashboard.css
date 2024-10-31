@@ -3,7 +3,12 @@
     --secondary-color: #16213e;
     --accent-color: #0fffb3;
     --text-color: #0fffb3;
+    --exp-color: rgb(136, 255, 217);
     --text-color-light: #8892b0;
+    --stat-card-1: #173454;
+    --stat-card-2: #5f2b2b;
+    --stat-card-3: #58490a;
+    --stat-card-4: #2a5238;
 }
 
 body {
@@ -97,37 +102,30 @@ body {
     border: 3px solid var(--accent-color);
     box-shadow: 0 0 15px var(--accent-color);
 }
-.linkedin-icon {
-    color: #0077b5;  /* LinkedIn blue color */
-    font-size: 24px;
-    text-decoration: none;
-    margin-top: 10px;
-    display: inline-block;
-}
-
-.linkedin-icon:hover {
-    color: #005582;  /* Darker shade for hover effect */
-}
-.additional-info {
-    flex-basis: 100%;
-    margin-top: 20px;
-}
-
-.info-card {
-    background-color: var(--secondary-color);
-    border-radius: 10px;
-    padding: 15px;
-    margin-top: 10px;
-}
-
 .stats-container {
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
 }
+.stat-card:nth-child(1) {
+    background-color: var(--stat-card-1);
+}
 
+.stat-card:nth-child(2) {
+    background-color: var(--stat-card-2);
+}
+
+.stat-card:nth-child(3) {
+    background-color: var(--stat-card-3);
+}
+
+.stat-card:nth-child(4) {
+    background-color: var(--stat-card-4);
+}
+.cntry-rgn {
+    text-align: left;
+}
 .stat-card {
-    background-color: var(--secondary-color);
     border-radius: 10px;
     padding: 15px;
     text-align: center;
@@ -143,7 +141,7 @@ body {
 
 .stat-card p {
     margin: 5px 0 0;
-    color: var(--text-color-light);
+    color: var(--exp-color);
 }
 
 .chart-container {
@@ -158,7 +156,6 @@ body {
     height: 300px;
 }
 /* Validity div styles*/
-
 .validator-card {
     background-color: var(--secondary-color);
     border-radius: 10px;
@@ -275,4 +272,25 @@ body {
 
 .dot.active {
     background-color: var(--accent-color);
+}
+/* Add this to your existing CSS file */
+.popup {
+    position: fixed;
+    right: -330px;
+    top: 20px;
+    width: 280px;
+    padding: 15px;
+    background-color: var(--primary-color);
+    color: var(--accent-color);
+    border-radius: 5px;
+    border: solid var(--accent-color) 1px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    transition: right 0.3s ease-in-out;
+    z-index: 1000;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.popup.show {
+    right: 20px;
 }

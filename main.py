@@ -4,10 +4,12 @@ import threading
 import core.Auth as auth
 import core.FileIntegrity as FI
 import core.Validation as Validation
+import core.VPN as VPN
 import pyautogui
 import time
 import os
 import socket
+import requests
 
 app = Flask(__name__)
 
@@ -39,7 +41,7 @@ def dashboard():
 
 @app.route('/dashboard/data')
 def dasboard_data():
-    data = {'ip': socket.gethostbyname(socket.gethostname()),
+    data = {'ip': None,
             'ram': psutil.virtual_memory().percent,
             'rom': psutil.disk_usage('/').percent,
             'net': 73}
@@ -216,13 +218,33 @@ def profile():
     else:
         return redirect('/login')
     
+# Vpn.RUN =  False
+@app.route('/vpn', methods=['POST'])
+def vpn():
+    if LOGGEDIN:
+        switch = request.get_json()
+
+        if switch == 1:
+            data = VPN.run()
+
+        elif switch == 0:
+            ip = requests.get('http://httpbin.org/ip').json()['origin']
+            locData = requests.get(f'http://ip-api.com/json/{ip}').json()
+            data = {
+                'query': ip,
+                'country': locData['country'],
+                'city': locData['city'],
+                'regionName': locData['regionName']
+            }
+
+        return jsonify(data)
+
 @app.route('/logout')
 def logout():
     global LOGGEDIN
     if LOGGEDIN:
         LOGGEDIN = False
     return redirect('/login')
-
 
 
 if __name__ == '__main__':
