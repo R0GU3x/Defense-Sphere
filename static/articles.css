@@ -157,3 +157,28 @@ body {
         grid-template-columns: 1fr;
     }
 }
+/* Add these to your existing CSS */
+
+.loading-spinner {
+    text-align: center;
+    padding: 2rem;
+    grid-column: 1 / -1;
+    color: #666;
+}
+
+.error-message {
+    text-align: center;
+    padding: 2rem;
+    grid-column: 1 / -1;
+    color: #ff0000;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.article-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    background-color: #f0f0f0;
+}

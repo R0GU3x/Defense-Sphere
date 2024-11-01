@@ -3,6 +3,7 @@ import core.Auth as auth
 import core.FileIntegrity as FI
 import core.Validation as Validation
 import core.VPN as VPN
+import core.CyberNews as Cybernews
 from datetime import datetime
 import psutil, threading, pyautogui, os, requests, qrcode
 
@@ -22,6 +23,10 @@ def about_us():
 @app.route('/articles')
 def article():
     return render_template('articles.html')
+
+@app.route('/articles/data')
+def article_data():
+    return jsonify(Cybernews.run())
 
 @app.route('/support')
 def support():
