@@ -1,15 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify, abort
-import psutil
-import threading
+from flask import Flask, render_template, redirect, jsonify, abort, request
 import core.Auth as auth
 import core.FileIntegrity as FI
 import core.Validation as Validation
 import core.VPN as VPN
-import pyautogui
-import time
-import os
-import socket
-import requests
+from datetime import datetime
+import psutil, threading, pyautogui, os, requests, qrcode
 
 app = Flask(__name__)
 
@@ -24,9 +19,9 @@ def home():
 def about_us():
     return render_template('about-us.html')
 
-@app.route('/article')
+@app.route('/articles')
 def article():
-    return render_template('article.html')
+    return render_template('articles.html')
 
 @app.route('/support')
 def support():
@@ -218,7 +213,6 @@ def profile():
     else:
         return redirect('/login')
     
-# Vpn.RUN =  False
 @app.route('/vpn', methods=['POST'])
 def vpn():
     if LOGGEDIN:
@@ -238,6 +232,20 @@ def vpn():
             }
 
         return jsonify(data)
+
+@app.route('/dashboard/phishing')
+def phishing():
+    if LOGGEDIN:
+        return render_template('Phishing.html')
+    else:
+        return abort(403)
+
+@app.route('/dashboard/password-gen')
+def password_generator():
+    if LOGGEDIN:
+        return render_template('Password-Generator.html')
+    else:
+        return abort(403)
 
 @app.route('/logout')
 def logout():

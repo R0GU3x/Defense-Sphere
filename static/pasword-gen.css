@@ -1,0 +1,332 @@
+:root {
+    --primary-color: #1a1a2e;
+    --secondary-color: #16213e;
+    --accent-color: #0fffb3;
+    --text-color: #0fffb3;
+    --text-color-light: #8892b0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    margin: 0;
+    min-height: 100vh;
+}
+
+/* Navigation Bar Styles */
+.navbar {
+    background-color: var(--secondary-color);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.nav-logo {
+    width: 32px;
+    height: 32px;
+}
+
+.nav-brand {
+    color: var(--accent-color);
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.nav-icon {
+    background: none;
+    border: none;
+    color: var(--text-color-light);
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 5px;
+    transition: color 0.3s ease;
+}
+
+.nav-icon:hover {
+    color: var(--accent-color);
+}
+
+.nav-button {
+    background-color: transparent;
+    color: var(--accent-color);
+    border: 1px solid var(--accent-color);
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.nav-button:hover {
+    background-color: var(--accent-color);
+    color: var(--primary-color);
+}
+
+/* Container Styles */
+.container {
+    background-color: var(--secondary-color);
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    max-width: 650px;
+    margin: 2rem auto;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.password-container {
+    position: relative;
+    width: 100%;
+    margin-bottom: 0.5rem;
+}
+
+.password-display {
+    width: 100%;
+    background-color: var(--primary-color);
+    color: var(--accent-color);
+    padding: 1rem;
+    border-radius: 5px;
+    font-family: monospace;
+    font-size: 1.2rem;
+    text-align: center;
+    border: 1px solid var(--text-color-light);
+    box-sizing: border-box;
+}
+
+.strength-indicator {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    height: 1.5em;
+}
+
+.options {
+    display: grid;
+    gap: 1rem;
+}
+
+.option {
+    display: flex;
+    align-items: center;
+}
+
+.option label {
+    margin-left: 0.5rem;
+}
+
+input[type="checkbox"] {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--accent-color);
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+}
+
+input[type="checkbox"]:checked {
+    background-color: var(--accent-color);
+}
+
+input[type="checkbox"]:checked::before {
+    content: '✓';
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+input[type="number"],
+input[type="text"] {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--text-color-light);
+    border-radius: 3px;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+button {
+    background-color: var(--accent-color);
+    color: var(--primary-color);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 1rem;
+}
+.qr-btn {
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    border: 1px  solid var(--text-color);
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 1rem;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+#lengthOption:not(:checked) ~ #passwordLength,
+#symbolOption:not(:checked) ~ #symbols,
+#wordOption:not(:checked) ~ #addWord {
+    display: none;
+}
+
+.strength-indicator.very-strong { color: #0f0; }
+.strength-indicator.strong { color: #0ff; }
+.strength-indicator.good { color: #ff0; }
+.strength-indicator.weak { color: #f90; }
+.strength-indicator.very-weak { color: #f00; }
+
+/* First, add a wrapper for the password display and copy button */
+
+
+.copy-btn {
+    position: absolute;
+    top: 50%;
+    right: 10px;  /* Changed from left to right */
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    width: 20px;  /* Set explicit width */
+    height: 20px; /* Set explicit height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+}
+
+.copy-btn svg {
+    width: 20px;
+    height: 20px;
+    color: var(--accent-color);
+    transition: color 0.3s ease;
+}
+
+.copy-btn:hover svg {
+    color: var(--text-color-light);
+}
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 12px 24px;
+    border-radius: 5px;
+    background-color: var(--secondary-color);
+    color: var(--accent-color);
+    border: 1px solid var(--accent-color);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.notification.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.notification svg {
+    width: 18px;
+    height: 18px;
+    color: var(--accent-color);
+}
+/* QR Code Modal Styles */
+.qr-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(26, 26, 46, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.qr-modal-content {
+    background-color: var(--secondary-color);
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--accent-color);
+    text-align: center;
+}
+
+.qr-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.qr-modal-header h3 {
+    margin: 0;
+    color: var(--accent-color);
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    color: var(--text-color-light);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    width: auto;
+    margin: 0;
+}
+
+.close-modal:hover {
+    color: var(--accent-color);
+}
+
+#qrcode {
+    padding: 1rem;
+    background-color: var(--primary-color);
+    border-radius: 5px;
+    display: inline-block;
+}
+
+.qr-note {
+    margin-top: 1rem;
+    color: var(--text-color-light);
+    font-size: 0.9rem;
+}

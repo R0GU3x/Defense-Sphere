@@ -26,32 +26,6 @@ async function fetchDashboardData() {
     document.getElementById('new-clients').textContent = dashboardData.newClients.toLocaleString();
     // document.getElementById('vpn').textContent = `${dashboardData.vpnConnection.toLocaleString()}`;
 }
-// //VPN funtion
-// async function toggleVPN() {
-//     const currentVpnLabel = document.getElementById('vpn').textContent
-//     // Add VPN logic here
-//     document.getElementById('vpn').textContent = 'Processing...';
-    
-//         if (currentVpnLabel === 'Not Connected') {
-//             postData = 1;
-//         } else {
-//             postData = 0;
-//             document.getElementById('vpn').textContent = 'Not Connected';
-//         }
-
-//         await fetch('/vpn', {
-//                 method: 'POST',
-//                 headers: {'Content-Type': 'application/json'},
-//                 body: JSON.stringify(postData),
-//         })
-//         .then(response => response.json())
-//         .then(data => {
-//             document.getElementById('vpn').textContent = 'Connected';
-//             setUserLocation(data);
-//         })
-            
-//     }
-
 // Modify the existing toggleVPN function
 async function toggleVPN() {
     const vpnElement = document.getElementById('vpn');
@@ -88,7 +62,7 @@ function showPopup() {
     popup.classList.add('show');
     setTimeout(() => {
         popup.classList.remove('show');
-    }, 8000);
+    }, 7000);
 }
 
 // Make sure this event listener is added to ensure the DOM is fully loaded

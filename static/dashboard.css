@@ -111,6 +111,7 @@ body {
     background-color: var(--stat-card-1);
 }
 
+
 .stat-card:nth-child(2) {
     background-color: var(--stat-card-2);
 }
@@ -121,6 +122,11 @@ body {
 
 .stat-card:nth-child(4) {
     background-color: var(--stat-card-4);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.stat-card:hover:nth-child(4) {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
 }
 .cntry-rgn {
     text-align: left;
