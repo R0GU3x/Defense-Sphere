@@ -27,7 +27,7 @@ def login(id:int, password:str) -> int:
         # compare the hashes
         if org_hash == new_hash:
             # sucess
-            return (0, decrypt_data['name'], decrypt_data['username'])
+            return (0, decrypt_data['name'], decrypt_data['role'], decrypt_data['username'])
         # wrong password
         return (1, None, None)
 
@@ -38,7 +38,7 @@ def login(id:int, password:str) -> int:
     # user not found
     return (2, None, None)
 
-def register(name:str, username:str, password:str):
+def register(name:str, role:str, username:str, password:str):
 
     bc = BC.Blockchain()
 
@@ -54,7 +54,7 @@ def register(name:str, username:str, password:str):
     if username in usernames:
         return -1
 
-    data = {'name': name, 'username': username, 'password': hashlib.sha256(password.encode()).hexdigest()}
+    data = {'name': name, 'role': role, 'username': username, 'password': hashlib.sha256(password.encode()).hexdigest()}
     return bc.create_new_block(data)
 
 ############################################

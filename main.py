@@ -30,7 +30,7 @@ def support():
 @app.route('/dashboard')
 def dashboard():
     if LOGGEDIN:
-        return render_template('dashboard.html', name=name, userid=userID)
+        return render_template('dashboard.html', name=name, role=role, userid=userID)
     else:
         return redirect('/login')
 
@@ -52,8 +52,8 @@ def login():
             userID = -1
         password = request.form['password']
 
-        global response, name, username
-        response, name, username = auth.login(userID, password)
+        global response, name, role, username
+        response, name, role, username = auth.login(userID, password)
 
         global LOGGEDIN
         if response == 0:
@@ -77,11 +77,12 @@ def login_data():
 def register():
     if request.method == 'POST':
         firstName = request.form['first-name']
+        role = request.form['job-role']
         username = request.form['username']
         password = request.form['password']
 
         global userID
-        userID = auth.register(firstName, username, password)
+        userID = auth.register(firstName, role, username, password)
         print(userID)
 
         return redirect('login')

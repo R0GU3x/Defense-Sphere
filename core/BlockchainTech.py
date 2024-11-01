@@ -9,6 +9,8 @@ try:
 except:
     import crYptographY as crypt
     
+DIFFICULTY = 6
+
 sym = crypt.Symmetric()
 
 class Block:
@@ -18,7 +20,7 @@ class Block:
 
         cls.prevHash = prevHash
         cls.data = data
-        cls.hash = cls.__calculate_hash(1)
+        cls.hash = cls.__calculate_hash(DIFFICULTY)
     
     @classmethod
     def __calculate_hash(cls, difficulty:int):
@@ -47,7 +49,7 @@ class Blockchain:
             self.__handle_new_sql_db()
         self.hashmap = self.__load_chain()
 
-        print(self.hashmap)
+        # print(self.hashmap)
     
     # check if the database already existed
     def __check_db_already_existed(self):
