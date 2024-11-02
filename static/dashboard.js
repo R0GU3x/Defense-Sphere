@@ -30,29 +30,59 @@ async function fetchDashboardData() {
 async function toggleVPN() {
     const vpnElement = document.getElementById('vpn');
     const currentVpnLabel = vpnElement.textContent;
-    vpnElement.textContent = 'Processing...';
+    
+    // Don't do anything if already in connecting state
+    if (currentVpnLabel === 'Connecting...') return;
     
     let postData;
     if (currentVpnLabel === 'Not Connected') {
         postData = 1;
+        vpnElement.textContent = 'Connecting...';
+        vpnElement.style.color = '#FFA500'; // Orange color for connecting state
         showPopup();
+        
+        // Add loading dots animation
+        let dots = 0;
+        const loadingInterval = setInterval(() => {
+            vpnElement.textContent = 'Connecting' + '.'.repeat(dots);
+            dots = (dots + 1) % 4;
+        }, 500);
+
+        try {
+            const response = await fetch('/vpn', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(postData),
+            });
+            const data = await response.json();
+            clearInterval(loadingInterval);
+            vpnElement.textContent = 'Connected';
+            vpnElement.style.color = getComputedStyle(document.documentElement).getPropertyValue('--accent-color');
+            setUserLocation(data);
+            startUptime();
+        } catch (error) {
+            clearInterval(loadingInterval);
+            console.error('Error toggling VPN:', error);
+            vpnElement.textContent = currentVpnLabel;
+            vpnElement.style.color = getComputedStyle(document.documentElement).getPropertyValue('--accent-color');
+        }
     } else {
         postData = 0;
         vpnElement.textContent = 'Not Connected';
-    }
-
-    try {
-        const response = await fetch('/vpn', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(postData),
-        });
-        const data = await response.json();
-        vpnElement.textContent = postData === 1 ? 'Connected' : 'Not Connected';
-        setUserLocation(data);
-    } catch (error) {
-        console.error('Error toggling VPN:', error);
-        vpnElement.textContent = currentVpnLabel;
+        
+        try {
+            const response = await fetch('/vpn', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(postData),
+            });
+            const data = await response.json();
+            setUserLocation(data);
+            stopUptime();
+        } catch (error) {
+            console.error('Error toggling VPN:', error);
+            vpnElement.textContent = currentVpnLabel;
+        }
     }
 }
 
@@ -230,4 +260,29 @@ function createSalesChart() {
             }
         }
     });
+}
+
+let uptimeInterval;
+let seconds = 0;
+
+function formatUptime(totalSeconds) {
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const secs = totalSeconds % 60;
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+}
+
+function startUptime() {
+    seconds = 0;
+    document.getElementById('uptime').textContent = `Uptime: 00:00:00`;
+    uptimeInterval = setInterval(() => {
+        seconds++;
+        document.getElementById('uptime').textContent = `Uptime: ${formatUptime(seconds)}`;
+    }, 1000);
+}
+
+function stopUptime() {
+    clearInterval(uptimeInterval);
+    seconds = 0;
+    document.getElementById('uptime').textContent = `Uptime: 00:00:00`;
 }

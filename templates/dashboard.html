@@ -1,5 +1,5 @@
 {% extends "base-dashboard.html" %}
-{% block title %}DefenseSphere Employee Dashboard{% endblock %}
+{% block title %}Dashboard{% endblock %}
 {% block content %}
 <link rel="stylesheet" href="/static/dashboard.css">
 <body>
@@ -22,7 +22,8 @@
             </div>
             <div class="stat-card" onclick="toggleVPN()" style="cursor: pointer;">
                 <h3 id="vpn">Not Connected</h3>
-                <p>VPN</p>
+                <p id="uptime">Uptime: 00:00:00</p>
+                <p class="vpn-txt">VPN</p>
             </div>
         </div>
         <div class="dashboard-grid">

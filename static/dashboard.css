@@ -147,7 +147,7 @@ body {
 
 .stat-card p {
     margin: 5px 0 0;
-    color: var(--exp-color);
+    color: var(--accent-color);
 }
 
 .chart-container {
@@ -299,4 +299,8 @@ body {
 
 .popup.show {
     right: 20px;
+}
+#uptime {
+    /* font-size: 0.9em; */
+    color: #eae1e1;
 }

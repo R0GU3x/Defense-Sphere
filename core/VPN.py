@@ -1,13 +1,15 @@
 from requests_tor import RequestsTor
 import os
-import threading
+
+errorCount = 0
 
 def run():
     # threading.Thread(target=_work).start()
     os.startfile(r'core\tor.exe')
 
     # connect to the TOR server
-    while True:
+    global errorCount
+    while errorCount <= 10:
         try:
             rq = RequestsTor(tor_ports=(9050, ), tor_cport=9051)
             rq.get('https://google.com')
@@ -27,4 +29,5 @@ def run():
 
         except Exception as e:
             print(f'{e} | Reconnecting...')
+            errorCount += 1
 
