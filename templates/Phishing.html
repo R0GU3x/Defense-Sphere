@@ -1,0 +1,30 @@
+{% extends "base-dashboard.html" %}
+
+{% block title %}Phishing Detetor{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="/static/phishing.css">
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <h1>Phishing Email Detector</h1>
+    <p class="description">Detect Fraudulent Emails Instantly with This Powerful AI/ML-Powered Tool</p>
+    
+    <div class="checker-container">
+        <textarea id="contentInput" placeholder="Paste URLs or email original content here"rows="15"></textarea>
+        
+        <button id="checkBtn" class="check-button">
+            Check
+        </button>
+    </div>
+
+    <div id="result" class="result-container"></div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="/static/phishing.js"></script>
+{% endblock %}

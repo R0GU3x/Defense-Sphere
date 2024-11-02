@@ -4,13 +4,12 @@ import core.FileIntegrity as FI
 import core.Validation as Validation
 import core.VPN as VPN
 import core.CyberNews as Cybernews
-from datetime import datetime
-import psutil, threading, pyautogui, os, requests, qrcode
+import core.Phishing as Phishing
+import psutil, threading, os, requests
 
 app = Flask(__name__)
 
 LOGGEDIN = False
-pyautogui.FAILSAFE = False
 
 @app.route('/')
 def home():
@@ -239,12 +238,22 @@ def vpn():
 
         return jsonify(data)
 
-@app.route('/dashboard/phishing')
+@app.route('/dashboard/phishing', methods=['GET', 'POST'])
 def phishing():
     if LOGGEDIN:
-        return render_template('Phishing.html')
+        if request.method != 'POST':
+            return render_template('Phishing.html')
+        else:
+            data = request.get_json()
+            email = data['content']
+
+            response = 'safe' if Phishing.run(email) == 0 else 'danger'
+
+            return jsonify(response)
     else:
-        return abort(403)
+        return redirect('/login')
+
+
 
 @app.route('/dashboard/password-gen')
 def password_generator():
@@ -266,4 +275,4 @@ if __name__ == '__main__':
     # real-time file monitoring
     threading.Thread(target=FI.run).start()
 
-    app.run(debug=True, use_reloader=False)
+    app.run(debug=True, use_reloader=False, host='0.0.0.0')

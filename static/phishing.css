@@ -1,0 +1,122 @@
+:root {
+    --primary-color: #1a1a2e;
+    --secondary-color: #16213e;
+    --accent-color: #0fffb3;
+    --text-color: #0fffb3;
+    --text-color-light: #8892b0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    margin: 0;
+    min-height: 100vh;
+    line-height: 1.9;
+}
+
+.container {
+    max-width: 850px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: var(--secondary-color);
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: var(--accent-color);
+    text-align: center;
+    margin-bottom: 1rem;
+    font-size: 2.5rem;
+}
+
+.description {
+    color: var(--text-color-light);
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+}
+
+.checker-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+textarea {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid var(--text-color-light);
+    border-radius: 5px;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    font-size: 18px;
+    resize: vertical;
+    min-height: 150px;
+    box-sizing: border-box;
+    font-family: monospace;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px rgba(15, 255, 179, 0.1);
+}
+
+textarea::placeholder {
+    color: var(--text-color-light);
+}
+
+.check-button {
+    background-color: var(--accent-color);
+    color: var(--primary-color);
+    border: none;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+    font-weight: bold;
+    align-self: flex-end;
+}
+
+.check-button:hover {
+    opacity: 0.9;
+}
+
+.result-container {
+    margin-top: 2rem;
+    padding: 1rem;
+    border-radius: 5px;
+    display: none;
+}
+
+.result-container.safe {
+    display: block;
+    background-color: rgba(15, 255, 179, 0.1);
+    border: 1px solid var(--accent-color);
+    color: var(--accent-color);
+}
+
+.result-container.danger {
+    display: block;
+    background-color: rgba(255, 71, 87, 0.1);
+    border: 1px solid #ff4757;
+    color: #ff4757;
+}
+
+@media (max-width: 768px) {
+    .container {
+        margin: 1rem;
+        padding: 1rem;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    .check-button {
+        width: 100%;
+    }
+}
