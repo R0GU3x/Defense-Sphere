@@ -5,11 +5,17 @@ import core.Validation as Validation
 import core.VPN as VPN
 import core.CyberNews as Cybernews
 import core.Phishing as Phishing
+import core.ExtDev as xdev
+import core.Logs as Logs
 import psutil, threading, os, requests
 
 app = Flask(__name__)
 
 LOGGEDIN = False
+
+def log_string(uname:str|int, action:str) -> str:
+    # return f'<span title="{uname}"> <b>Action:</b> {action} </span>'
+    return f'<span title="{uname}"> {action} </span>'
 
 @app.route('/')
 def home():
@@ -61,10 +67,14 @@ def login():
 
         global LOGGEDIN
         if response == 0:
+            # Logs.write_log(f'<span title="{username}"> <b>Action:</b> Login Successful </span>')
+            Logs.write_log(log_string(username, 'Login Successful'))
             LOGGEDIN = True
             return redirect('dashboard')
-        if response == 1:
-            pass
+        elif response == 1:
+            Logs.write_log(log_string(userID, 'Incorrect Password'))
+        elif response == 2:
+            Logs.write_log(log_string(userID, 'Invalid UserID'))
     
     if not LOGGEDIN:
         return render_template('login.html')
@@ -87,9 +97,10 @@ def register():
 
         global userID
         userID = auth.register(firstName, role, username, password)
-        print(userID)
 
-        return redirect('login')
+        Logs.write_log(log_string(userID, 'New account registered'))
+
+        return redirect('/login')
 
     return render_template('register.html')
 
@@ -107,19 +118,25 @@ def fi_monitoring():
         if task and file:
             if task == 'add':
                 FI.add(file)
+                Logs.write_log(log_string(username, '<b>FMI:</b> File added'))
             elif task == 'clear':
                 FI.clear(file)
+                Logs.write_log(log_string(username, '<b>FMI:</b> File cleared'))
             elif task == 'remove':
                 FI.remove(file)
+                Logs.write_log(log_string(username, '<b>FMI:</b> File removed'))
             elif task == 'pause':
                 FI.pause(file)
+                Logs.write_log(log_string(username, '<b>FMI:</b> File paused'))
             elif task == 'resume':
                 FI.resume(file)
+                Logs.write_log(log_string(username, '<b>FMI:</b> File resumed'))
             # -------------------------
             return redirect('/dashboard/FI-Monitor')
 
         elif file and action:
             if action == 'open':
+                Logs.write_log(log_string(username, '<b>FMI:</b> File opened'))
                 os.startfile(file)
             # --------------------------
             return redirect('/dashboard/FI-Monitor')
@@ -197,10 +214,14 @@ def profile():
         keys = tuple(data.keys())
 
         if 'email' in keys:
+            Logs.write_log(log_string(username, f'Email Validation - {data["email"]}'))
+
             data = eval(Validation.check_email(data['email']).replace('true', 'True').replace('false', 'False').replace('null', 'None'))
             response = 1 if data['deliverability'] == 'DELIVERABLE' else 0
         
         elif 'country' in keys and 'phone' in keys:
+            Logs.write_log(log_string(username, f'Phone Validation - +{data["country"]} {data["phone"]}'))
+
             data = eval(Validation.check_phone(country_codes[data['country']], data['phone']).replace('true', 'True').replace('false', 'False').replace('null', 'None'))
             try:
                 response = 1 if data['valid'] == True else 0
@@ -208,6 +229,8 @@ def profile():
                 response = 0
         
         elif 'iban' in keys:
+            Logs.write_log(log_string(username, f'IBAN Validation - {data["iban"]}'))
+
             data = eval(Validation.check_iban(data['iban']).replace('true', 'True').replace('false', 'False').replace('null', 'None'))
             try:
                 response = 1 if data['valid'] == True else 0
@@ -224,6 +247,7 @@ def vpn():
         switch = request.get_json()
 
         if switch == 1:
+            Logs.write_log(log_string(username, f'VPN activated'))
             data = VPN.run()
 
         elif switch == 0:
@@ -246,14 +270,16 @@ def phishing():
         else:
             data = request.get_json()
             email = data['content']
-
-            response = 'safe' if Phishing.run(email) == 0 else 'danger'
+            
+            if Phishing.run(email) == 0:
+                response = 'safe'
+            else:
+                Logs.write_log(log_string(username, 'Caught a spam email !'))
+                response = 'danger'
 
             return jsonify(response)
     else:
         return redirect('/login')
-
-
 
 @app.route('/dashboard/password-gen')
 def password_generator():
@@ -262,10 +288,27 @@ def password_generator():
     else:
         return abort(403)
 
+@app.route('/dashboard/logs')
+def logs_manager():
+    if LOGGEDIN:
+        return render_template('Logs.html')
+    else:
+        return redirect('/login')
+
+@app.route('/dashboard/logs/data')
+def logs_data():
+    if LOGGEDIN:
+        data = Logs.read_logs()
+        data.reverse()
+        return jsonify(data)
+    else:
+        return abort(403)
+
 @app.route('/logout')
 def logout():
     global LOGGEDIN
     if LOGGEDIN:
+        Logs.write_log(log_string(username, 'Logged out'))
         LOGGEDIN = False
     return redirect('/login')
 
@@ -274,5 +317,6 @@ if __name__ == '__main__':
 
     # real-time file monitoring
     threading.Thread(target=FI.run).start()
+    threading.Thread(target=xdev.run).start()
 
     app.run(debug=True, use_reloader=False, host='0.0.0.0')

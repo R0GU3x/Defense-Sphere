@@ -1,0 +1,121 @@
+:root {
+    --primary-color: #1a1a2e;
+    --secondary-color: #16213e;
+    --accent-color: #0fffb3;
+    --text-color: #0fffb3;
+    --text-color-light: #8892b0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+h1 {
+    text-align: center;
+    color: var(--accent-color);
+    margin-bottom: 2rem;
+}
+
+.info-panel {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    background-color: var(--secondary-color);
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.info-item {
+    text-align: center;
+}
+
+.info-item h3 {
+    color: var(--accent-color);
+    margin-bottom: 0.5rem;
+}
+
+.info-item p {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.table-container {
+    background-color: var(--secondary-color);
+    border-radius: 10px;
+    padding: 1.5rem;
+    overflow-x: auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.log-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.log-table th,
+.log-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--text-color-light);
+}
+
+.log-table th {
+    background-color: var(--primary-color);
+    color: var(--accent-color);
+    font-weight: bold;
+}
+
+.log-table tr:hover {
+    background-color: rgba(15, 255, 179, 0.1);
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2rem;
+}
+
+.page-btn {
+    background-color: var(--secondary-color);
+    color: var(--accent-color);
+    border: 1px solid var(--accent-color);
+    padding: 0.5rem 1rem;
+    margin: 0 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.page-btn:hover {
+    background-color: var(--accent-color);
+    color: var(--primary-color);
+}
+
+#currentPage {
+    color: var(--text-color-light);
+    margin: 0 1rem;
+}
+
+@media (max-width: 768px) {
+    .info-panel {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .log-table th,
+    .log-table td {
+        padding: 0.75rem;
+    }
+}

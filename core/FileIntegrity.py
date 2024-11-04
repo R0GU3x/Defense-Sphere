@@ -2,6 +2,7 @@ import sqlite3 as sql
 import hashlib
 import time
 import pyttsx3
+import core.Logs as Logs
 
 def _database_and_table_handler():
     global con, cur
@@ -77,5 +78,6 @@ def run():
             if (not pause) and (not _check_integrity(file, hash)) and alert==0:
                 cur.execute(f'UPDATE hashes SET alert=1 WHERE file="{file}"')
                 voice_alert()
+                Logs.write_log(f'File Breach Detected: {file}')
 
         time.sleep(2)

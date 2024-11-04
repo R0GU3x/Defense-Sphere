@@ -29,14 +29,14 @@ def login(id:int, password:str) -> int:
             # sucess
             return (0, decrypt_data['name'], decrypt_data['role'], decrypt_data['username'])
         # wrong password
-        return (1, None, None)
+        return (1, None, None, None)
 
     for row in bc.hashmap:
         if row[0] == id:
             return hash_actions(row[1])
 
     # user not found
-    return (2, None, None)
+    return (2, None, None, None)
 
 def register(name:str, role:str, username:str, password:str):
 
@@ -57,11 +57,26 @@ def register(name:str, role:str, username:str, password:str):
     data = {'name': name, 'role': role, 'username': username, 'password': hashlib.sha256(password.encode()).hexdigest()}
     return bc.create_new_block(data)
 
+def forgot_password(n, prompt):
+
+    bc = BC.Blockchain()
+
+    # data -> userid
+    if n == 1:
+        pass
+
+    # data -> username
+    elif n == 2:
+        pass
+                
+
 ############################################
 
 if __name__ == '__main__':
 
-    if int(input('\nLogin (1) or Register (2): ')) == 1:
+    c = int(input('\nLogin (1), Register (2) or Forgot Password (3): '))
+
+    if c == 1:
         try:
             id = int(input('[LOGIN] Enter your User ID: '))
         except:
@@ -70,8 +85,17 @@ if __name__ == '__main__':
         password = input('[LOGIN] Enter your password: ')
         print(login(id, password))
 
-    else:
+    elif c == 2:
         name = input('[REGISTER] Enter the name: ')
+        role = input('[REGISTER] Enter the role: ')
         username = input('[REGISTER] Enter the username: ')
         password = hashlib.sha256(input('[REGISTER] Enter the password: ').encode()).hexdigest()
-        register(name, username, password)
+        register(name, role, username, password)
+    
+    elif c == 3:
+        dataType = int(input('[FORGOT PASSWORD] UserID (1) or Username (2): '))
+        id = input('[FORGOT PASSWORD] Enter the data: ')
+        if dataType == 1:
+            forgot_password(dataType, id)
+        else:
+            forgot_password(dataType, id)
