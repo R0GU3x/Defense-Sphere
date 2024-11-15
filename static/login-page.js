@@ -63,39 +63,39 @@ document.addEventListener("DOMContentLoaded", function() {
         }, 3000);
     }
 
-    forgotPasswordLink.addEventListener("click", function(event) {
-        event.preventDefault();
-        const email = emailInput.value;
+    // forgotPasswordLink.addEventListener("click", function(event) {
+    //     event.preventDefault();
+    //     const email = emailInput.value;
 
-        // Add your forgot password logic here
-        // For example, you can make an AJAX request to your server to send a password reset email
-        fetch('/forgot-password', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                email: email
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                console.log("Password reset email sent");
-                // Display a success message to the user
-                alert("Password reset email sent");
-            } else {
-                console.log("Error sending password reset email");
-                // Display an error message to the user
-                alert("Error sending password reset email");
-            }
-        })
-        .catch(error => {
-            console.log("Error sending password reset email");
-            // Display an error message to the user
-            alert("Error sending password reset email");
-        });
-    });
+    //     // Add your forgot password logic here
+    //     // For example, you can make an AJAX request to your server to send a password reset email
+    //     fetch('/forgot-password', {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json'
+    //         },
+    //         body: JSON.stringify({
+    //             email: email
+    //         })
+    //     })
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         if (data.success) {
+    //             console.log("Password reset email sent");
+    //             // Display a success message to the user
+    //             alert("Password reset email sent");
+    //         } else {
+    //             console.log("Error sending password reset email");
+    //             // Display an error message to the user
+    //             alert("Error sending password reset email");
+    //         }
+    //     })
+    //     .catch(error => {
+    //         console.log("Error sending password reset email");
+    //         // Display an error message to the user
+    //         alert("Error sending password reset email");
+    //     });
+    // });
 
     createAccountLink.addEventListener("click", function(event) {
         event.preventDefault();

@@ -52,6 +52,9 @@ header h1{
     color: var(--accent-color);
     border-radius: 50%;
     transition: background-color 0.3s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .icon-button:hover {
@@ -85,4 +88,186 @@ header h1{
 
 .logout-button svg {
     display: block;
+}
+
+/* Add these styles to your existing CSS */
+.notification-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.notification-popup {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    width: 300px;
+    background-color: var(--secondary-color);
+    border: 1px solid var(--accent-color);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform-origin: top right;
+    transform: scale(0.8);
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 1001;
+}
+
+.notification-popup.show {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.notification-popup h3 {
+    color: var(--accent-color);
+    margin: 0 0 15px 0;
+}
+
+.notification-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    color: var(--text-color-light);
+    text-align: center;
+}
+
+.notification-empty svg {
+    margin-bottom: 10px;
+    opacity: 0.7;
+}
+
+.notification-item {
+    padding: 12px;
+    border-bottom: 1px solid rgba(15, 255, 179, 0.1);
+    transition: background-color 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.notification-content {
+    flex: 1;
+}
+
+.delete-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    color: var(--text-color-light);
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    opacity: 0;  /* Hidden by default */
+}
+
+.notification-item:hover .delete-button {
+    opacity: 1;  /* Show on hover */
+}
+
+.delete-button:hover {
+    background-color: rgba(255, 77, 77, 0.1);
+    color: #ff4d4d;
+}
+
+.delete-button svg {
+    display: block;
+    stroke: currentColor;
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+.notification-item:hover {
+    background-color: rgba(15, 255, 179, 0.05);
+}
+
+.notification-message {
+    color: var(--text-color);
+    margin: 0;
+    font-size: 14px;
+}
+
+.notification-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    color: #ff4d4d;
+    text-align: center;
+}
+
+.notification-error svg {
+    margin-bottom: 10px;
+    stroke: #ff4d4d;
+}
+
+.notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(15, 255, 179, 0.1);
+}
+
+.notification-header h3 {
+    color: var(--accent-color);
+    margin: 0;
+    font-size: 16px;
+}
+
+.clear-button {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    color: var(--text-color-light);
+    font-size: 12px;
+    padding: 4px 8px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    height: 24px;
+}
+
+.clear-button:hover {
+    background-color: rgba(255, 77, 77, 0.1);
+    color: #ff4d4d;
+}
+
+.clear-button svg {
+    stroke: currentColor;
+    width: 14px;
+    height: 14px;
+}
+
+/* Animation for items being removed */
+.notification-item {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

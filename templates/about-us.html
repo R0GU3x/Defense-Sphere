@@ -1,16 +1,29 @@
-{% extends "base.html" %}
-
-{% block title %}About-Us - DefenseSphere{% endblock %}
-
-{% block content %}
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DefenseSphere Support</title>
-    <link rel="stylesheet" href="static/about-us.css">
-    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+    <title>About-Us-DefenseSphere</title>
+    <link rel="stylesheet" href="/static/about-us.css">
+    <link rel="icon" href="/static/images/favicon.ico" type="image/x-icon">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
 </head>
+<body>
+    <header id="base-main-header">
+        <nav class="base-container">
+            <div class="base-nav-content">
+                <img src="/static/images/shieldLogo1.png" alt="DefenseSphere Logo" class="base-logo-image" />
+                <a href="/" class="base-logo">DefenseSphere</a>
+                <div class="base-nav-links">
+                    <a href="/articles">Articles</a>
+                    <a href="/support" class="transition-link">Support</a>
+                    <a href="/about-us">About-Us</a>
+                    <a href="/login" class="base-cta-button">Log in</a>
+                </div>
+            </div>
+        </nav>
+    </header>
 <body>
     <main>
         <section class="hero">
@@ -87,5 +100,21 @@
             </div>
         </section>
     </main>
+<footer>
+    <div class="base-container">
+        <p>&copy; 2024 DefenseSphere. All rights reserved.</p>
+        <div class="base-footer-links">
+            <a href="/privacy-policy">Privacy Policy</a>
+            <a href="/terms-of-service">Terms of Service</a>
+            <a href="/contact">Contact Us</a>
+        </div>
+        <div class="base-social-media">
+            <a href="https://www.facebook.com" target="_blank">Facebook</a>
+            <a href="https://www.twitter.com" target="_blank">Twitter</a>
+            <a href="https://www.linkedin.com" target="_blank">LinkedIn</a>
+        </div>
+    </div>
+</footer>
+<script src="/static/about-us.js"></script>
 </body>
-{% endblock content %}
+</html>

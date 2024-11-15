@@ -31,7 +31,12 @@
                 <div class="welcome-text">
                     <h2>Welcome, <span id="user-name">{{ name }}</span></h2>
                 <p>{{ role }}</p>
-                <p style="color: #0fffb3; font-weight: 500;">ID: {{ userid }}</p>
+                <p style="color: #0fffb3; font-weight: 500;">ID: {{ userid }} 
+                    <svg class="copy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" cursor="pointer">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                </p>
             </div>
             <img src="/static/images/avatar/anonymous.png" alt="Employee Photo" class="profile-picture">
         </div>
@@ -164,6 +169,9 @@
     <div id="vpn-popup" class="popup">
         <p>Connecting VPN, please do not close Terminal.</p>
         <p></p>To disconnect: Close Terminal</p>
+    </div>
+    <div class="copy-notification" id="copyNotification">
+        UserID copied successfully!
     </div>
 {% endblock %}
 

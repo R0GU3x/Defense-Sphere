@@ -7,6 +7,8 @@ async function fetchNews() {
         const response = await fetch('/articles/data');
         const data = await response.json();
         
+        console.log('Fetched data:', data);
+        
         if (data.articles && data.articles.length > 0) {
             // Update hero section with the latest article
             updateHeroSection(data.articles[0]);
@@ -42,12 +44,12 @@ function createArticleCard(article) {
     card.className = 'article-card';
     
     card.innerHTML = `
-        <img src="${article.urlToImage || '/static/images/kai-re.jpg'}" 
+        <img src="${article.urlToImage || '/static/images/article-not-found.jpg'}" 
              alt="${article.title}"
-             onerror="this.src='/static/images/kai-re.jpg'">
+             onerror="this.src='/static/images/article-not-found.jpg'">
         <div class="article-content">
-            <span class="article-category">Cybersecurity News</span>
-            <h3>${article.title}</h3>
+            <span class="article-category" style="color: #afafaf">Cybersecurity News</span>
+            <h3 style="color: #c0009c;">${article.title}</h3>
             <p>${article.description || 'Click to read more about this story.'}</p>
             <a href="${article.url}" class="read-more" target="_blank">Continue Reading</a>
         </div>

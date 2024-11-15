@@ -14,7 +14,6 @@ app = Flask(__name__)
 LOGGEDIN = False
 
 def log_string(uname:str|int, action:str) -> str:
-    # return f'<span title="{uname}"> <b>Action:</b> {action} </span>'
     return f'<span title="{uname}"> {action} </span>'
 
 @app.route('/')
@@ -86,7 +85,59 @@ def login_data():
     data = {'response':response}
     return jsonify(data)
 
+@app.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        dataType, prompt = request.get_json().values()
+        row = auth.forgot_password(dataType, prompt)
+        print(row)
+        if row:
+            # return redirect('/two-factor-auth')
+            return jsonify(1)
+    return render_template('forgot-password.html')
 
+
+@app.route('/two-factor-auth', methods=['GET', 'POST'])
+def two_factor_authentication():
+    if request.method == 'POST':
+        # authentication = request.args.get('authentication')
+        data = request.get_json()
+        print(data)
+        return jsonify(1)
+    
+    return render_template('two-factor-auth.html')
+    # return render_template('reset-password.html')
+
+@app.route('/reset-password')
+def reset_password():
+    return render_template('reset-password.html')
+
+@app.route('/settings')
+def settings():
+    if LOGGEDIN:
+        return render_template('settings.html')
+    else:
+        return abort(404)
+
+notifications = ['Security breach detected mathafuckah', 'Your OTP is 80085', 'Kya re bheek mangya']
+@app.route('/notifications/data', methods=['GET'])
+def notification_data():
+    global notifications
+    if LOGGEDIN:
+        action, index = request.args.get('action'), request.args.get('index')
+
+        if action == 'display':
+            return jsonify(notifications)
+        elif action == 'remove':
+            notifications.pop(int(index))
+            return jsonify(0)
+        elif action == 'clear':
+            notifications.clear()
+            return jsonify(0)
+        
+    else:
+        return abort(404)
+    
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -141,7 +192,7 @@ def fi_monitoring():
             # --------------------------
             return redirect('/dashboard/FI-Monitor')
         
-        return render_template('FI-Monitor.html')
+        return render_template('fi-monitor.html')
     
     else:
         return redirect('/login')
@@ -266,7 +317,7 @@ def vpn():
 def phishing():
     if LOGGEDIN:
         if request.method != 'POST':
-            return render_template('Phishing.html')
+            return render_template('phishing.html')
         else:
             data = request.get_json()
             email = data['content']
@@ -284,14 +335,14 @@ def phishing():
 @app.route('/dashboard/password-gen')
 def password_generator():
     if LOGGEDIN:
-        return render_template('Password-Generator.html')
+        return render_template('password-generator.html')
     else:
         return abort(403)
 
 @app.route('/dashboard/logs')
 def logs_manager():
     if LOGGEDIN:
-        return render_template('Logs.html')
+        return render_template('logs.html')
     else:
         return redirect('/login')
 

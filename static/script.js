@@ -1,96 +1,101 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const navbar = document.getElementById('navbar');
-    let prevScrollPos = window.pageYOffset;
-
-    /* Smooth scrolling for navigation links
-    const navLinks = document.querySelectorAll('nav a');
-    navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const targetId = this.getAttribute('href').substring(1);
-            const targetElement = document.getElementById(targetId);
-            targetElement.scrollIntoView({ behavior: 'smooth' });
-        });
-    }); */
-    // Form submission
+    const header = document.getElementById('main-header');
+    const featureTabs = document.querySelectorAll('.feature-tab');
+    const featureDetails = document.querySelectorAll('.feature-detail');
     const emailForm = document.getElementById('email-form');
-    emailForm.addEventListener('submit', function(e) {
+
+    // Header scroll effect
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+    });
+
+    // Feature tabs functionality
+    featureTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const feature = tab.getAttribute('data-feature');
+            featureTabs.forEach(t => t.classList.remove('active'));
+            featureDetails.forEach(d => d.classList.remove('active'));
+            tab.classList.add('active');
+            document.getElementById(feature).classList.add('active');
+        });
+    });
+
+    // Email form submission
+    emailForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        const emailInput = this.querySelector('input[type="email"]');
-        const email = emailInput.value;
-        
-        // Here you would typically send the email to your server
-        // For this example, we'll just show an alert
-        alert(`Thank you for subscribing with email: ${email}`);
-        emailInput.value = '';
+        alert('Thank you for subscribing!');
+        emailForm.reset();
     });
 
-    // Add a scroll-to-top button
-    const scrollToTopButton = document.createElement('button');
-    scrollToTopButton.innerHTML = '&uarr;';
-    scrollToTopButton.setAttribute('aria-label', 'Scroll to top');
-    scrollToTopButton.id = 'scroll-to-top';
-    document.body.appendChild(scrollToTopButton);
+    // GSAP animations
+    gsap.registerPlugin(ScrollTrigger);
 
-    scrollToTopButton.addEventListener('click', function() {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Hero section animation
+    gsap.from('#hero h1, #hero p, #hero .cta-button', {
+        opacity: 0,
+        y: 50,
+        stagger: 0.2,
+        duration: 1,
+        ease: 'power3.out'
     });
 
-    // Show/hide scroll-to-top button and navbar based on scroll position THIS SHITTY SECTION IS PREVENTING THE HYPERLINK TO WORK PROPERLY
-    window.addEventListener('scroll', function() {
-        const currentScrollPos = window.pageYOffset;
+    // Feature cards animation
+    // gsap.from('.feature-card', {
+    //     scrollTrigger: {
+    //         trigger: '#features',
+    //         start: 'top bottom-=100px',
+    //         toggleActions: 'play none none none'
+    //     },
+    //     opacity: 0,
+    //     y: 30,
+    //     stagger: 0.2,
+    //     duration: 0.8,
+    //     ease: 'power2.out'
+    // });
 
-        if (currentScrollPos > 300) {
-            scrollToTopButton.style.display = 'block';
-        } else {
-            scrollToTopButton.style.display = 'none';
-        }
-
-        if (prevScrollPos > currentScrollPos) {
-            navbar.style.top = '0';
-        } else {
-            navbar.style.top = '-80px';
-        }
-
-        prevScrollPos = currentScrollPos;
+    // Testimonial animation
+    gsap.from('.testimonial-card', {
+        scrollTrigger: {
+            trigger: '#testimonial',
+            start: 'top 80%'
+        },
+        opacity: 0,
+        scale: 0.8,
+        duration: 1,
+        ease: 'power3.out'
     });
-}); 
 
-// additionalF stuff
-document.addEventListener('DOMContentLoaded', () => {
-    const buttons = document.querySelectorAll('.additionalF-button');
-    const additionalFs = document.querySelectorAll('.additionalF');
-
-    buttons.forEach(button => {
-        button.addEventListener('click', () => {
-            const additionalFId = button.getAttribute('data-additionalF');
-            
-            // Update active button
-            buttons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
-
-            // Update active additionalF
-            additionalFs.forEach(additionalF => {
-                if (additionalF.id === additionalFId) {
-                    additionalF.classList.add('active');
-                } else {
-                    additionalF.classList.remove('active');
-                }
-            });
-        });
+    // CTA section animation
+    gsap.from('#cta h2, #cta p, #email-form', {
+        scrollTrigger: {
+            trigger: '#cta',
+            start: 'top 80%'
+        },
+        opacity: 0,
+        y: 50,
+        stagger: 0.2,
+        duration: 1,
+        ease: 'power3.out'
     });
-});
-/* for revealing box transition*/ 
-document.addEventListener('DOMContentLoaded', function() {
-    const stepBoxes = document.querySelectorAll('.step-box');
 
-    stepBoxes.forEach(box => {
-        box.addEventListener('mouseenter', function() {
-            this.querySelector('.step-content').style.maxHeight = this.querySelector('.step-content').scrollHeight + 'px';
-        });
-
-        box.addEventListener('mouseleave', function() {
-            this.querySelector('.step-content').style.maxHeight = '0';
-        });
+    // Security tips animation
+    gsap.from('.tip-card', {
+        scrollTrigger: {
+            trigger: '#security-tips',
+            start: 'top 80%'
+        },
+        opacity: 0,
+        y: 30,
+        stagger: 0.2,
+        duration: 0.8,
+        ease: 'power2.out'
     });
+
+    setTimeout(() => {
+        ScrollTrigger.refresh();
+    }, 100);
 });

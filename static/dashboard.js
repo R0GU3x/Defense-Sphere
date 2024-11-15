@@ -4,6 +4,34 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Create the sales chart
     createSalesChart();
+
+    // Add event listener to copy icon
+    const copyIcon = document.querySelector('.copy-icon');
+    if (copyIcon) {
+        copyIcon.addEventListener('click', async function() {
+            const userId = document.getElementById('user-name').closest('.welcome-text').querySelector('p:last-of-type').textContent.split(':')[1].trim();
+            
+            try {
+                await navigator.clipboard.writeText(userId);
+                
+                // Visual feedback for icon
+                const originalColor = copyIcon.getAttribute('stroke');
+                copyIcon.setAttribute('stroke', '#00ff00');
+                
+                // Show notification
+                const notification = document.getElementById('copyNotification');
+                notification.classList.add('show');
+                
+                // Hide notification and reset icon color after delay
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    copyIcon.setAttribute('stroke', originalColor);
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+            }
+        });
+    }
 });
 
 async function fetchDashboardData() {

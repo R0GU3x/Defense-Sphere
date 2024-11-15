@@ -5,9 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
     <title>{% block title %}DefenseSphere{% endblock %}</title>
-    <link rel="stylesheet" href="/static/base-dashboard.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='base-dashboard.css') }}">
     {% block extra_css %}{% endblock %}
+    <script src="{{ url_for('static', filename='base-dashboard.js') }}" defer></script>
 </head>
+<body>
     <header>
         <div class="base-logo" onclick="window.location.href='/dashboard'" style="cursor: pointer;">
             <img src="/static/images/shieldLogo1.png" alt="DefenseSphere Logo" class="logo">
@@ -20,7 +22,7 @@
                     <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
                 </svg>
             </a>
-            <a href="/notifications" class="icon-button">
+            <a onclick="toggleNotifications()" class="icon-button">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                     <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
@@ -35,8 +37,26 @@
                 <span>Log Out</span>
             </a>
         </div>
+        <div id="notificationOverlay" class="notification-overlay">
+            <div id="notificationPopup" class="notification-popup">
+                <div class="notification-header">
+                    <h3>Notifications</h3>
+                    <button onclick="clearNotifications()" class="clear-button">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 6h18"></path>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
+                            <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                        Clear All
+                    </button>
+                </div>
+                <div id="notificationContent"></div>
+            </div>
+        </div>
     </header>
     {% block content %}{% endblock %}
     
-    {% block scripts %}{% endblock %}
+    {% block scripts %}
+    {% endblock %}
+</body>
 </html>

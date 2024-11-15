@@ -1,12 +1,16 @@
-import hashlib
-import json
-import base64
-import os
+import hashlib, json, base64, os
+import sqlite3 as sql
+
 # ==========================
 try:
     import core.BlockchainTech as BC
 except:
     import BlockchainTech as BC
+
+try:
+    import core.crYptographY as crypt
+except:
+    import crYptographY as crypt
 # ===========================
 
 def login(id:int, password:str) -> int:
@@ -57,18 +61,62 @@ def register(name:str, role:str, username:str, password:str):
     data = {'name': name, 'role': role, 'username': username, 'password': hashlib.sha256(password.encode()).hexdigest()}
     return bc.create_new_block(data)
 
-def forgot_password(n, prompt):
+
+def forgot_password(dataType:int, prompt:int|str):
 
     bc = BC.Blockchain()
 
-    # data -> userid
-    if n == 1:
-        pass
-
-    # data -> username
-    elif n == 2:
-        pass
+    #todo data -> userid
+    if dataType == 1:
+        prompt = int(prompt)
+        for row in bc.hashmap:
+            if row[0] == prompt:
+                return row
                 
+        return None
+
+    #todo data -> username
+    elif dataType == 2:
+        for row in bc.hashmap:
+            if row[0]:
+                with open(rf'core\blocks\{row[1]}.json', 'r') as f:
+                    whole_data = json.load(f)
+                    data = whole_data[str(0)]
+
+                decrypt_data = eval(BC.sym.decrypt_data(base64.b64decode((data))))
+                if decrypt_data['username'] == prompt:
+                    return row
+        
+        return None
+
+def reset_password(row:list|tuple, newPassword:str):
+
+    bc = BC.Blockchain()
+
+    with open(rf'core\blocks\{row[1]}.json', 'r') as f:
+        whole_data = json.load(f)
+        data = whole_data[str(0)]
+    
+    decrypt_data = eval(BC.sym.decrypt_data(base64.b64decode((data))))
+    decrypt_data['password'] = hashlib.sha256(newPassword.encode()).hexdigest()
+
+    sym = crypt.Symmetric()
+    d = sym.encrypt_data(str(decrypt_data))
+    enc_data = base64.b64encode(d).decode()
+    h = hashlib.sha256(enc_data.encode()).hexdigest()
+
+    whole_data[str(0)] = enc_data
+    whole_data[str(1)] = h
+
+    with open(rf'core\blocks\{h}.json', 'w') as f:
+        json.dump(whole_data, f)
+    
+    con = sql.connect(r'core\hashmap.db', autocommit=True, check_same_thread=False)
+    cur = con.cursor()
+    cur.execute(f"UPDATE blockchain SET curHash='{h}' WHERE id={row[0]}")
+    con.close()
+
+    os.remove(rf'core\blocks\{row[1]}.json')
 
 ############################################
 
@@ -94,8 +142,9 @@ if __name__ == '__main__':
     
     elif c == 3:
         dataType = int(input('[FORGOT PASSWORD] UserID (1) or Username (2): '))
-        id = input('[FORGOT PASSWORD] Enter the data: ')
-        if dataType == 1:
-            forgot_password(dataType, id)
-        else:
-            forgot_password(dataType, id)
+        prompt = input('[FORGOT PASSWORD] Enter the data: ')
+
+        row = forgot_password(dataType, prompt)
+        if row:
+            newPassword = input('Enter your New Password: ')
+            reset_password(row, newPassword)
