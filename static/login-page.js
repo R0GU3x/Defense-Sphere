@@ -7,6 +7,9 @@ document.addEventListener("DOMContentLoaded", function() {
     async function handleSubmit(event) {
         event.preventDefault();
 
+        signInBtn.disabled = true;
+        signInBtn.textContent = "Smile please...";
+
         const formData = new FormData(form);
 
         // Prepare the data to be sent to the /login endpoint
@@ -103,6 +106,16 @@ document.addEventListener("DOMContentLoaded", function() {
         // For example, you can redirect to the sign up page
         window.location.href = '/register';
     });
+
+    // signInBtn.addEventListener("click", function(event) {
+    //     event.preventDefault();
+    //     // Disable the sign-in button and change its text
+    //     signInBtn.disabled = true;
+    //     signInBtn.textContent = "Smile Please!";
+        
+    //     // Call the face recognition process
+    //     handleSubmit();
+    // });
 
     form.addEventListener('submit', handleSubmit);
 });

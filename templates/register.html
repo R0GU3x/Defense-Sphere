@@ -58,6 +58,20 @@
             </div>
         </div>
     </div>
+
+    <!-- Replace the existing camera panel div with this -->
+    <div id="camera-panel" style="display: none;" class="camera-panel">
+        <div class="camera-container">
+            <h2>Face Recognition Setup</h2>
+            <video id="video" autoplay playsinline></video>
+            <canvas id="canvas" style="display: none;"></canvas>
+            <div class="camera-buttons">
+                <button id="capture-btn" class="camera-btn">Capture</button>
+                <button id="cancel-camera-btn" class="camera-btn cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <script src="static/register-page.js"></script>
     <script src="/static/transition.js"></script>
 </body>

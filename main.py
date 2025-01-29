@@ -7,6 +7,7 @@ import core.CyberNews as Cybernews
 import core.Phishing as Phishing
 import core.ExtDev as xdev
 import core.Logs as Logs
+import core.FaceRecon as FaceRecon
 import psutil, threading, os, requests
 
 app = Flask(__name__)
@@ -69,7 +70,8 @@ def login():
             # Logs.write_log(f'<span title="{username}"> <b>Action:</b> Login Successful </span>')
             Logs.write_log(log_string(username, 'Login Successful'))
             LOGGEDIN = True
-            return redirect('dashboard')
+            # return redirect('/dashboard')
+            return redirect('/face-recon')
         elif response == 1:
             Logs.write_log(log_string(userID, 'Incorrect Password'))
         elif response == 2:
@@ -363,6 +365,36 @@ def logout():
         LOGGEDIN = False
     return redirect('/login')
 
+@app.route('/save-reference-image', methods=['POST'])
+def save_reference_image():
+    if 'image' not in request.files:
+        return {'error': 'No image file'}, 400
+        
+    image_file = request.files['image']
+    
+    # Create a directory for storing images if it doesn't exist
+    if not os.path.exists('core/data'):
+        os.makedirs('core/data')
+    
+    # Save the image
+    save_path = os.path.join('core/data', 'reference.jpg')
+    try:
+        image_file.save(save_path)
+        return {'success': True}, 200
+    except Exception as e:
+        print(f"Error saving image: {e}")
+        return {'error': str(e)}, 500
+
+@app.route('/face-recon')
+def face_recon():
+    f = FaceRecon.FaceRecon(1)
+    r = 1 if f.run() else 0
+    if r == 1:
+        return redirect('/dashboard')
+    else:
+        return redirect('/login')
+    
+    return {'isAuthorized': r}
 
 if __name__ == '__main__':
 

@@ -143,86 +143,106 @@ function switchValidator(index) {
 }
 
 function validateEmail() {
-    const email = document.getElementById('emailInput').value;
+    const emailInput = document.getElementById('emailInput');
     const resultDiv = document.getElementById('emailResult');
+    
+    // Change button text to "Validating..."
+    const validateBtn = emailInput.nextElementSibling; // Assuming the button is the next sibling
+    validateBtn.textContent = "Validating...";
 
     fetch('/dashboard/validate', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({email: email})
+        body: JSON.stringify({email: emailInput.value})
     })
-
     .then(response => response.json())
     .then(data => {
-        console.log(data)
+        console.log(data);
         if (data === 1) {
-            resultDiv.innerHTML = `<span style="color: #0fffb3">✓ Valid email  address</span>`;
-        } else{
+            resultDiv.innerHTML = `<span style="color: #0fffb3">✓ Valid email address</span>`;
+        } else {
             resultDiv.innerHTML = `<span style="color: #ff4d4d">✗ Invalid email address</span>`;
         }
-    })
+        // Reset button text after validation
+        validateBtn.textContent = "Validate";
+
+        // Clear input and result after 20 seconds
+        setTimeout(() => {
+            emailInput.value = '';
+            resultDiv.innerHTML = '';
+        }, 20000);
+    });
 }
 
 function validatePhone() {
     const country = document.getElementById('countryCode').value;
-    const phone = document.getElementById('phoneInput').value;
+    const phoneInput = document.getElementById('phoneInput');
     const resultDiv = document.getElementById('phoneResult');
     
-    // if (phoneRegex.test(phone)) {
-    //     resultDiv.innerHTML = `<span style="color: #0fffb3">✓ Valid phone number</span>`;
-    // } else {
-    //     resultDiv.innerHTML = `<span style="color: #ff4d4d">✗ Invalid phone number</span>`;
-    // }
+    // Change button text to "Validating..."
+    const validateBtn = phoneInput.nextElementSibling; // Assuming the button is the next sibling
+    validateBtn.textContent = "Validating...";
 
     fetch('/dashboard/validate', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({country: country, phone: phone})
+        body: JSON.stringify({country: country, phone: phoneInput.value})
     })
-
     .then(response => response.json())
     .then(data => {
-        console.log(data)
+        console.log(data);
         if (data === 1) {
             resultDiv.innerHTML = `<span style="color: #0fffb3">✓ Valid Phone Number</span>`;
-        } else{
+        } else {
             resultDiv.innerHTML = `<span style="color: #ff4d4d">✗ Invalid Phone Number</span>`;
         }
-    })
+        // Reset button text after validation
+        validateBtn.textContent = "Validate";
 
+        // Clear input and result after 20 seconds
+        setTimeout(() => {
+            phoneInput.value = '';
+            resultDiv.innerHTML = '';
+        }, 20000);
+    });
 }
 
 function validateIBAN() {
-    const iban = document.getElementById('ibanInput').value.replace(/\s/g, '');
+    const ibanInput = document.getElementById('ibanInput');
     const resultDiv = document.getElementById('ibanResult');
     
-    // if (ibanRegex.test(iban)) {
-    //     resultDiv.innerHTML = `<span style="color: #0fffb3">✓ Valid IBAN format</span>`;
-    // } else {
-    //     resultDiv.innerHTML = `<span style="color: #ff4d4d">✗ Invalid IBAN format</span>`;
-    // }
+    // Change button text to "Validating..."
+    const validateBtn = ibanInput.nextElementSibling; // Assuming the button is the next sibling
+    validateBtn.textContent = "Validating...";
 
     fetch('/dashboard/validate', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({iban: iban})
+        body: JSON.stringify({iban: ibanInput.value.replace(/\s/g, '')})
     })
-
     .then(response => response.json())
     .then(data => {
-        console.log(data)
+        console.log(data);
         if (data === 1) {
-            resultDiv.innerHTML = `<span style="color: #0fffb3">✓ Valid IBAN </span>`;
-        } else{
-            resultDiv.innerHTML = `<span style="color: #ff4d4d">✗ Invalid IBAN </span>`;
+            resultDiv.innerHTML = `<span style="color: #0fffb3">✓ Valid IBAN</span>`;
+        } else {
+            resultDiv.innerHTML = `<span style="color: #ff4d4d">✗ Invalid IBAN</span>`;
         }
-    })
+        // Reset button text after validation
+        validateBtn.textContent = "Validate";
+
+        // Clear input and result after 20 seconds
+        setTimeout(() => {
+            ibanInput.value = '';
+            resultDiv.innerHTML = '';
+        }, 20000);
+    });
 }
 
 function setUserLocation(data) {

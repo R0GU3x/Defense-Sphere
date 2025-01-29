@@ -9,7 +9,8 @@ try:
 except:
     import crYptographY as crypt
     
-DIFFICULTY = 6
+# DIFFICULTY = 6
+DIFFICULTY = 2
 
 sym = crypt.Symmetric()
 
