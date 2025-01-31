@@ -1,11 +1,9 @@
-import threading
-import time
-import cv2
+import threading, time, cv2, os
 from deepface import DeepFace
 
 class FaceRecon:
 
-    def __init__(self, source:int):
+    def __init__(self, source:int, face_image:str):
         self.cap = cv2.VideoCapture(source, cv2.CAP_DSHOW)
 
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
@@ -13,7 +11,10 @@ class FaceRecon:
 
         self.counter = 0
 
-        self.reference_img = cv2.imread(r"D:\Project\Final Year Project\defense sphere\core\data\reference.jpg")  # use your own image here
+        self.face_image = face_image
+
+        # self.reference_img = cv2.imread(r"D:\Project\Final Year Project\defense sphere\core\data\reference.jpg")  # use your own image here
+        self.reference_img = cv2.imread(self.face_image)
 
         self.face_match = False
 
@@ -40,7 +41,8 @@ class FaceRecon:
                         pass
                 self.counter += 1
                 if self.face_match:
-                    print('Done')
+                    print('Face Recognized')
+                    os.remove(self.face_image)
                     return True
                 else:
                     time.sleep(0.5)

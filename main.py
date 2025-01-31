@@ -9,6 +9,7 @@ import core.ExtDev as xdev
 import core.Logs as Logs
 import core.FaceRecon as FaceRecon
 import psutil, threading, os, requests
+import base64
 
 app = Flask(__name__)
 
@@ -62,8 +63,15 @@ def login():
             userID = -1
         password = request.form['password']
 
-        global response, name, role, username
-        response, name, role, username = auth.login(userID, password)
+        global response, name, role, username, face
+        response, name, role, username, face = auth.login(userID, password)
+
+        # decode face data
+        face = base64.b64decode(face.encode())
+        global face_img
+        face_img = f'{username}.jpg'
+        with open(face_img, 'wb') as f:
+            f.write(face)
 
         global LOGGEDIN
         if response == 0:
@@ -154,7 +162,7 @@ def register():
         # password = request.json['password']
 
         global userID
-        userID = auth.register(firstName, role, username, password)
+        userID = auth.register(firstName, role, username, password, register_face)
 
         Logs.write_log(log_string(userID, 'New account registered'))
 
@@ -378,13 +386,20 @@ def save_reference_image():
     image_file = request.files['image']
     
     # Create a directory for storing images if it doesn't exist
-    if not os.path.exists('core/data'):
-        os.makedirs('core/data')
+    # if not os.path.exists('core/data'):
+    #     os.makedirs('core/data')
     
     # Save the image
-    save_path = os.path.join('core/data', 'reference.jpg')
+    img_path = 'reference.jpg'
     try:
-        image_file.save(save_path)
+        image_file.save(img_path)
+
+        global register_face
+        with open(img_path, 'rb') as f:
+            register_face = base64.b64encode(f.read()).decode()
+        
+        os.remove(img_path)
+
         return {'success': True}, 200
     except Exception as e:
         print(f"Error saving image: {e}")
@@ -392,8 +407,14 @@ def save_reference_image():
 
 @app.route('/face-recon')
 def face_recon():
-    f = FaceRecon.FaceRecon(1)
-    return redirect('/dashboard') if f.isAuthorized() else redirect('/login')
+    f = FaceRecon.FaceRecon(1, face_img)
+    FI.voice_alert('Initializing biometric authentication.')
+
+    if f.isAuthorized():
+        FI.voice_alert(f'Welcome back {name}!')
+        return redirect('/dashboard') 
+    else:
+        redirect('/login')
 
 if __name__ == '__main__':
 

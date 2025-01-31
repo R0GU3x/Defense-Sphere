@@ -96,13 +96,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Hide the camera panel
                 cameraPanel.style.display = 'none';
                 
-                alert('Image captured and saved successfully!');
-
                 // Call submitRegistration after capturing the image
                 await submitRegistration(); 
             } catch (error) {
                 console.error('Error saving image:', error);
-                alert('Error saving image. Please try again.');
             }
         };
 
