@@ -97,6 +97,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 cameraPanel.style.display = 'none';
                 
                 alert('Image captured and saved successfully!');
+
+                // Call submitRegistration after capturing the image
+                await submitRegistration(); 
             } catch (error) {
                 console.error('Error saving image:', error);
                 alert('Error saving image. Please try again.');
@@ -112,78 +115,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             cameraPanel.style.display = 'none';
         };
-    }
-
-    // Function to convert ImageData to RGB array
-    function imageDataToRGBArray(imageData) {
-        const { width, height, data } = imageData;
-        const rgbArray = [];
-
-        for (let y = 0; y < height; y++) {
-            const row = [];
-            for (let x = 0; x < width; x++) {
-                const pixelIndex = (y * width + x) * 4;
-                row.push([
-                    data[pixelIndex],     // R
-                    data[pixelIndex + 1], // G
-                    data[pixelIndex + 2]  // B
-                ]);
-            }
-            rgbArray.push(row);
-        }
-
-        return rgbArray;
-    }
-
-    async function submitRegistration(rgbArray) {
-        // Get and disable the button
-        const registerBtn = document.getElementById('register-btn');
-        registerBtn.disabled = true;
-        registerBtn.textContent = 'Creating your account...';
-        registerBtn.style.opacity = '0.7';
-        registerBtn.style.cursor = 'not-allowed';
-
-        try {
-            const formData = new FormData(form);
-            
-            // Create the data object with form data and RGB array
-            const data = {
-                frame: rgbArray
-            };
-            formData.forEach((value, key) => {
-                data[key] = value;
-            });
-
-            // Send POST request to /register
-            await fetch('/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json', // Changed to JSON
-                },
-                body: JSON.stringify(data)
-            });
-
-            // Rest of the registration process...
-            const response = await fetch("/register/data");
-            const userData = await response.json();
-
-            if (userData.userID === -1) {
-                showError("This user already exists. Please login.");
-                registerBtn.disabled = false;
-                registerBtn.textContent = 'Create Your Account';
-                registerBtn.style.opacity = '1';
-                registerBtn.style.cursor = 'pointer';
-            } else {
-                showPopup(userData.userID);
-            }
-        } catch (error) {
-            console.error('Registration error:', error);
-            showError("An error occurred during registration. Please try again.");
-            registerBtn.disabled = false;
-            registerBtn.textContent = 'Create Your Account';
-            registerBtn.style.opacity = '1';
-            registerBtn.style.cursor = 'pointer';
-        }
     }
 
     function showError(message) {
@@ -232,6 +163,66 @@ document.addEventListener('DOMContentLoaded', function() {
             document.body.removeChild(popup);
             window.location.href = '/login';
         });
+    }
+
+    async function submitRegistration() {
+        // Get and disable the button
+        console.log(1);
+        const registerBtn = document.getElementById('register-btn');
+        registerBtn.disabled = true;
+        registerBtn.textContent = 'Creating your account...';
+        registerBtn.style.opacity = '0.7';
+        registerBtn.style.cursor = 'not-allowed';
+
+        console.log(2);
+
+        try {
+
+            console.log(3);
+
+            const formData = new FormData(form);
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+            
+            console.log(4, data);
+
+            await fetch('/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                // body: JSON.stringify(data)
+                body: new URLSearchParams(data)
+            });
+
+            console.log(5)
+
+            // Fetch user data after registration
+            const response = await fetch("/register/data");
+            console.log(6, response)
+
+            const userData = await response.json();
+
+            console.log(7, userData)
+
+            if (userData.userID === -1) {
+                showError("This user already exists. Please login.");
+            } else {
+                showPopup(userData.userID);
+            }
+        } catch (error) {
+            console.error('Registration error:', error);
+            showError("An error occurred during registration. Please try again. " + 
+                     "Check the console for more details.");
+        } finally {
+            // Always re-enable the button
+            registerBtn.disabled = false;
+            registerBtn.textContent = 'Create Your Account';
+            registerBtn.style.opacity = '1';
+            registerBtn.style.cursor = 'pointer';
+        }
     }
 
     form.addEventListener('submit', handleSubmit);

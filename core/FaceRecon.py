@@ -27,7 +27,7 @@ class FaceRecon:
         except ValueError:
             self.face_match = False
 
-    def run(self):
+    def isAuthorized(self):
 
         while True:
             ret, frame = self.cap.read()
@@ -41,13 +41,13 @@ class FaceRecon:
                 self.counter += 1
                 if self.face_match:
                     print('Done')
-                    return 1
+                    return True
                 else:
                     time.sleep(0.5)
 
 
 # if name == main
 if __name__ == "__main__":
-    f = FaceRecon.FaceRecon(1)
-    r = 1 if f.run() else 0
+    f = FaceRecon(1)
+    r = 1 if f.isAuthorized() else 0
     print(r)

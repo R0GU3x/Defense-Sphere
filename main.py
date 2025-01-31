@@ -143,10 +143,15 @@ def notification_data():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
+        # print(request.json)
         firstName = request.form['first-name']
         role = request.form['job-role']
         username = request.form['username']
         password = request.form['password']
+        # firstName = request.json['first-name']
+        # role = request.json['job-role']
+        # username = request.json['username']
+        # password = request.json['password']
 
         global userID
         userID = auth.register(firstName, role, username, password)
@@ -388,13 +393,7 @@ def save_reference_image():
 @app.route('/face-recon')
 def face_recon():
     f = FaceRecon.FaceRecon(1)
-    r = 1 if f.run() else 0
-    if r == 1:
-        return redirect('/dashboard')
-    else:
-        return redirect('/login')
-    
-    return {'isAuthorized': r}
+    return redirect('/dashboard') if f.isAuthorized() else redirect('/login')
 
 if __name__ == '__main__':
 
