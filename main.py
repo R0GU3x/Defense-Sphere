@@ -8,6 +8,7 @@ import core.Phishing as Phishing
 import core.ExtDev as xdev
 import core.Logs as Logs
 import core.FaceRecon as FaceRecon
+import core.Firewall as Firewall
 import psutil, threading, os, requests
 import base64
 
@@ -69,15 +70,13 @@ def login():
         # decode face data
         face = base64.b64decode(face.encode())
         global face_img
-        face_img = f'{username}.jpg'
+        face_img = f'core/{username}.jpg'
         with open(face_img, 'wb') as f:
             f.write(face)
 
-        global LOGGEDIN
         if response == 0:
             # Logs.write_log(f'<span title="{username}"> <b>Action:</b> Login Successful </span>')
             Logs.write_log(log_string(username, 'Login Successful'))
-            LOGGEDIN = True
             # return redirect('/dashboard')
             return redirect('/face-recon')
         elif response == 1:
@@ -129,7 +128,7 @@ def settings():
     else:
         return abort(404)
 
-notifications = ['Security breach detected mathafuckah', 'Your OTP is 80085', 'Kya re bheek mangya']
+notifications = list()
 @app.route('/notifications/data', methods=['GET'])
 def notification_data():
     global notifications
@@ -151,15 +150,10 @@ def notification_data():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        # print(request.json)
         firstName = request.form['first-name']
         role = request.form['job-role']
         username = request.form['username']
         password = request.form['password']
-        # firstName = request.json['first-name']
-        # role = request.json['job-role']
-        # username = request.json['username']
-        # password = request.json['password']
 
         global userID
         userID = auth.register(firstName, role, username, password, register_face)
@@ -370,6 +364,49 @@ def logs_data():
     else:
         return abort(403)
 
+@app.route('/firewall')
+def firewall():
+    if LOGGEDIN:
+        return render_template('firewall.html')
+    else:
+        return redirect('/login')
+    
+@app.route('/firewall/create-rule', methods=['GET', 'POST'])
+def firewall_create_rule():
+    if LOGGEDIN:
+        if request.method == 'POST':
+            data = request.get_json()
+            response = Firewall.create_rule(name=data['ruleName'], 
+                                        dir=data['direction'], 
+                                        status=data['status'], 
+                                        localip=data['localIpAddress'], 
+                                        remoteip=data['remoteIpAddress'], 
+                                        localport=data['localPort'], 
+                                        remoteport=data['remotePort'], 
+                                        protocol=data['protocol'])
+            # response 0, 2, str<>
+            return jsonify(response)
+    else:
+        return redirect('/login')
+    
+@app.route('/firewall/show-rules')
+def firewall_show_rules():
+    if LOGGEDIN:
+        global firewall_rules
+        firewall_rules = Firewall.show_rules()
+        return jsonify(firewall_rules)
+    else:
+        return redirect('/login')
+
+@app.route('/firewall/delete-rule', methods=['POST'])
+def firewall_delete_rule():
+    if LOGGEDIN:
+        ruleName = request.get_json()
+        Firewall.delete(ruleName)
+        return jsonify(0)
+    else:
+        return redirect('/login')
+
 @app.route('/logout')
 def logout():
     global LOGGEDIN
@@ -384,10 +421,6 @@ def save_reference_image():
         return {'error': 'No image file'}, 400
         
     image_file = request.files['image']
-    
-    # Create a directory for storing images if it doesn't exist
-    # if not os.path.exists('core/data'):
-    #     os.makedirs('core/data')
     
     # Save the image
     img_path = 'reference.jpg'
@@ -410,8 +443,10 @@ def face_recon():
     f = FaceRecon.FaceRecon(1, face_img)
     FI.voice_alert('Initializing biometric authentication.')
 
+    global LOGGEDIN
     if f.isAuthorized():
         FI.voice_alert(f'Welcome back {name}!')
+        LOGGEDIN = True
         return redirect('/dashboard') 
     else:
         redirect('/login')

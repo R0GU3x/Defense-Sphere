@@ -1,7 +1,5 @@
 let isOpen = false;
 
-console.log(1)
-
 window.toggleNotifications = function() {
     const notificationOverlay = document.getElementById('notificationOverlay');
     const notificationPopup = document.getElementById('notificationPopup');

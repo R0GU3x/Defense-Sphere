@@ -28,7 +28,7 @@ def abuse_detection(ip):
     return data
 
 
-errorIPs = []
+errorIPs = set()
 
 def resolve(ip):
     return (socket.gethostbyaddr(ip))[0]
@@ -53,7 +53,9 @@ def packet_callback(packet:sc.Packet):
             print(data+'\n='*50)
 
     except Exception as e:
-        errorIPs.append(ip)
+        # errorIPs.append(ip) if ip != -1 else None
+        errorIPs.add(ip) if ip != -1 else None
+        # errorIPs = list(set(errorIPs))
 
 def run():
     sc.sniff(iface=0, prn=packet_callback, store=False)

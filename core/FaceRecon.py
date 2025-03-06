@@ -11,10 +11,8 @@ class FaceRecon:
 
         self.counter = 0
 
-        self.face_image = face_image
-
-        # self.reference_img = cv2.imread(r"D:\Project\Final Year Project\defense sphere\core\data\reference.jpg")  # use your own image here
-        self.reference_img = cv2.imread(self.face_image)
+        self.reference_img = cv2.imread(face_image)
+        os.remove(face_image)
 
         self.face_match = False
 
@@ -34,22 +32,50 @@ class FaceRecon:
             ret, frame = self.cap.read()
 
             if ret:
+
+                cv2.imshow('Facial Recognition Console', frame)
+
                 if self.counter % 30 == 0:
                     try:
                         threading.Thread(target=self.check_face, args=(frame.copy(),)).start()
                     except ValueError:
                         pass
+
                 self.counter += 1
+
                 if self.face_match:
                     print('Face Recognized')
-                    os.remove(self.face_image)
                     return True
                 else:
-                    time.sleep(0.5)
+                    return True
+                    cv2.waitKey(1)
+                    time.sleep(0.05)
 
+
+    # TODO FLET APPLICATION SNPPET (CAUTION ⚠️)
+
+    # def main(self, page:ft.Page):
+
+    #     self.page = page
+
+    #     self.page.title = "Flet OpenCV Camera"
+
+    #     # Create an Image control
+    #     self.img_control = ft.Image(src_base64="", width=640, height=480)
+    #     self.page.add(self.img_control)
+
+    #     # Run the video capture in a separate thread
+    #     threading.Thread(target=self.isAuthorized, args=(self.page, self.img_control), daemon=True).start()
+
+    #     self.page.update()
+    
+    
+
+    # def console_gui(self):
+    #     pass
 
 # if name == main
 if __name__ == "__main__":
-    f = FaceRecon(1)
+    f = FaceRecon(1, f'core/ok.jpg')
     r = 1 if f.isAuthorized() else 0
     print(r)
