@@ -65,7 +65,7 @@ def voice_alert(s='File Breach Detected! Immediate attention recommended!'):
     engine = pyttsx3.init()
     voices = engine.getProperty('voices')
     engine.setProperty('voice', voices[1].id)
-    engine.setProperty('rate', 120)
+    engine.setProperty('rate', 160)
     engine.say(s)        
     engine.runAndWait()
 
@@ -78,6 +78,7 @@ def run():
             if (not pause) and (not _check_integrity(file, hash)) and alert==0:
                 cur.execute(f'UPDATE hashes SET alert=1 WHERE file="{file}"')
                 voice_alert()
-                Logs.write_log(f'File Breach Detected: {file}')
+                # Logs.write_log(f'File Breach Detected: {file}')
+                Logs.write_log("#adminOnly", f'<b>File Breach Detected:</b> {file}')
 
         time.sleep(2)

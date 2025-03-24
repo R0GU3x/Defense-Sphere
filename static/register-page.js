@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function showPopup(userId) {
         const popup = document.createElement('div');
         popup.innerHTML = `
-            <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white;
+            <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #0f172a;
              padding: 20px; border: 1px solid #ccc; box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 1000; border-radius: 10px;">
                 <h2>Registration Successful</h2>
                 <p>Your account has been created. Please copy your User ID for future reference.</p>

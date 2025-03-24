@@ -92,4 +92,3 @@ if __name__ == "__main__":
     # edit rules
     edit('fatpig', {'action': 'allow', 'dir': 'in'})
     # edit('fatpig', {'action': 'block'})
-    delete('fuckoff')

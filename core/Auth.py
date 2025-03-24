@@ -13,18 +13,14 @@ except:
     import crYptographY as crypt
 # ===========================
 
-def login(id:int, password:str) -> int:
-
-    bc = BC.Blockchain()
-
-    def hash_actions(hash:str):
+def hash_actions(hash:str):
         # open the json file and load the data
         with open(rf'core\blocks\{hash}.json', 'rb') as f:
             data = json.load(f)[str(0)]
         
         # decrypt the data using the symmetric key
         decrypt_data = eval(BC.sym.decrypt_data(base64.b64decode((data))))
-        org_hash, new_hash = decrypt_data['password'], hashlib.sha256(password.encode()).hexdigest()
+        org_hash, new_hash = decrypt_data['password'], hashlib.sha256(__password.encode()).hexdigest()
         
         # print(decrypt_data)
 
@@ -34,6 +30,13 @@ def login(id:int, password:str) -> int:
             return (0, decrypt_data['name'], decrypt_data['role'], decrypt_data['username'], decrypt_data['face'])
         # wrong password
         return (1, None, None, None, None)
+
+def login(id:int, password:str) -> int:
+
+    bc = BC.Blockchain()
+
+    global __password
+    __password = password
 
     for row in bc.hashmap:
         if row[0] == id:

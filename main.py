@@ -1,4 +1,6 @@
 from flask import Flask, render_template, redirect, jsonify, abort, request
+from requests_tor import RequestsTor
+import psutil, threading, requests, os, base64, time, socket
 import core.Auth as auth
 import core.FileIntegrity as FI
 import core.Validation as Validation
@@ -9,15 +11,12 @@ import core.ExtDev as xdev
 import core.Logs as Logs
 import core.FaceRecon as FaceRecon
 import core.Firewall as Firewall
-import psutil, threading, os, requests
-import base64
+import core.IntraNetwork as IntraNetwork
+import core.ComSoc as ComSoc
 
 app = Flask(__name__)
 
-LOGGEDIN = False
-
-def log_string(uname:str|int, action:str) -> str:
-    return f'<span title="{uname}"> {action} </span>'
+EMP_LOGGEDIN, ADMIN_LOGGEDIN = False, False
 
 @app.route('/')
 def home():
@@ -41,8 +40,10 @@ def support():
 
 @app.route('/dashboard')
 def dashboard():
-    if LOGGEDIN:
+    if EMP_LOGGEDIN:
         return render_template('dashboard.html', name=name, role=role, userid=userID)
+    elif ADMIN_LOGGEDIN:
+        return redirect('/admin-dashboard')
     else:
         return redirect('/login')
 
@@ -76,24 +77,27 @@ def login():
 
         if response == 0:
             # Logs.write_log(f'<span title="{username}"> <b>Action:</b> Login Successful </span>')
-            Logs.write_log(log_string(username, 'Login Successful'))
+            Logs.write_log(username, 'Login Successful')
             # return redirect('/dashboard')
             return redirect('/face-recon')
         elif response == 1:
-            Logs.write_log(log_string(userID, 'Incorrect Password'))
+            Logs.write_log(userID, 'Incorrect Password')
         elif response == 2:
-            Logs.write_log(log_string(userID, 'Invalid UserID'))
+            Logs.write_log(userID, 'Invalid UserID')
     
-    if not LOGGEDIN:
-        return render_template('login.html')
-    else:
+    if EMP_LOGGEDIN:
         return redirect('/dashboard')
+    elif ADMIN_LOGGEDIN:
+        return redirect('/admin-dashboard')
+    else:
+        return render_template('login.html')
 
 @app.route('/login/data')
 def login_data():
-    data = {'response':response}
+    data = {'response':response, 'isAdmin':ADMIN_LOGGEDIN}
     return jsonify(data)
 
+_2FA = False
 @app.route('/forgot-password', methods=['GET', 'POST'])
 def forgot_password():
     if request.method == 'POST':
@@ -101,8 +105,22 @@ def forgot_password():
         row = auth.forgot_password(dataType, prompt)
         print(row)
         if row:
-            # return redirect('/two-factor-auth')
-            return jsonify(1)
+            # fetch the face image
+            face_data_enc = auth.hash_actions(row[1])[4]
+            face_data = base64.b64decode(face_data_enc.encode())
+            face_img = f'core/{prompt}.jpg'
+            with open(face_img, 'wb') as f:
+                f.write(face_data)
+
+            FI.voice_alert('Initiating Biometric Scan')
+            f = FaceRecon.FaceRecon(1, face_img)
+
+            if f.isAuthorized():
+                Logs.write_log(prompt, 'Biometric Scan Successful')
+                return redirect('/reset-password')
+
+            return redirect('/forgot-password')
+        
     return render_template('forgot-password.html')
 
 
@@ -119,20 +137,23 @@ def two_factor_authentication():
 
 @app.route('/reset-password')
 def reset_password():
-    return render_template('reset-password.html')
+    if _2FA:
+        return render_template('reset-password.html')
+    else:
+        return abort(403)
 
 @app.route('/settings')
 def settings():
-    if LOGGEDIN:
+    if EMP_LOGGEDIN or ADMIN_LOGGEDIN:
         return render_template('settings.html')
     else:
-        return abort(404)
+        return abort(403)
 
 notifications = list()
 @app.route('/notifications/data', methods=['GET'])
 def notification_data():
     global notifications
-    if LOGGEDIN:
+    if EMP_LOGGEDIN or ADMIN_LOGGEDIN:
         action, index = request.args.get('action'), request.args.get('index')
 
         if action == 'display':
@@ -145,7 +166,7 @@ def notification_data():
             return jsonify(0)
         
     else:
-        return abort(404)
+        return abort(403)
     
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -158,7 +179,7 @@ def register():
         global userID
         userID = auth.register(firstName, role, username, password, register_face)
 
-        Logs.write_log(log_string(userID, 'New account registered'))
+        Logs.write_log(userID, 'New account registered')
 
         return redirect('/login')
 
@@ -169,46 +190,46 @@ def register_data():
     data = {'userID':userID}
     return jsonify(data)
 
-@app.route('/dashboard/FI-Monitor', methods=['GET'])
+@app.route('/FI-Monitor', methods=['GET'])
 def fi_monitoring():
-    if LOGGEDIN:
+    if EMP_LOGGEDIN or ADMIN_LOGGEDIN:
         task, file = request.args.get('task'), request.args.get('file')
         file, action = request.args.get('file'), request.args.get('action')
 
         if task and file:
             if task == 'add':
                 FI.add(file)
-                Logs.write_log(log_string(username, '<b>FMI:</b> File added'))
+                Logs.write_log(username, '<b>FMI:</b> File added')
             elif task == 'clear':
                 FI.clear(file)
-                Logs.write_log(log_string(username, '<b>FMI:</b> File cleared'))
+                Logs.write_log(username, '<b>FMI:</b> File cleared')
             elif task == 'remove':
                 FI.remove(file)
-                Logs.write_log(log_string(username, '<b>FMI:</b> File removed'))
+                Logs.write_log(username, '<b>FMI:</b> File removed')
             elif task == 'pause':
                 FI.pause(file)
-                Logs.write_log(log_string(username, '<b>FMI:</b> File paused'))
+                Logs.write_log(username, '<b>FMI:</b> File paused')
             elif task == 'resume':
                 FI.resume(file)
-                Logs.write_log(log_string(username, '<b>FMI:</b> File resumed'))
+                Logs.write_log(username, '<b>FMI:</b> File resumed')
             # -------------------------
-            return redirect('/dashboard/FI-Monitor')
+            return redirect('/FI-Monitor')
 
         elif file and action:
             if action == 'open':
-                Logs.write_log(log_string(username, '<b>FMI:</b> File opened'))
+                Logs.write_log(username, '<b>FMI:</b> File opened')
                 os.startfile(file)
             # --------------------------
-            return redirect('/dashboard/FI-Monitor')
+            return redirect('/FI-Monitor')
         
         return render_template('fi-monitor.html')
     
     else:
         return redirect('/login')
 
-@app.route('/dashboard/FI-Monitor/data')
+@app.route('/FI-Monitor/data')
 def fi_data():
-    if LOGGEDIN:
+    if EMP_LOGGEDIN or ADMIN_LOGGEDIN:
         return jsonify(FI.DATA)
     else:
         abort(403)
@@ -268,19 +289,19 @@ country_codes = {
 
 @app.route('/dashboard/validate', methods=['POST'])
 def profile():
-    if LOGGEDIN:
+    if EMP_LOGGEDIN or ADMIN_LOGGEDIN:
 
         data = request.get_json()
         keys = tuple(data.keys())
 
         if 'email' in keys:
-            Logs.write_log(log_string(username, f'Email Validation - {data["email"]}'))
+            Logs.write_log(username, f'Email Validation - {data["email"]}')
 
             data = eval(Validation.check_email(data['email']).replace('true', 'True').replace('false', 'False').replace('null', 'None'))
             response = 1 if data['deliverability'] == 'DELIVERABLE' else 0
         
         elif 'country' in keys and 'phone' in keys:
-            Logs.write_log(log_string(username, f'Phone Validation - +{data["country"]} {data["phone"]}'))
+            Logs.write_log(username, f'Phone Validation - +{data["country"]} {data["phone"]}')
 
             data = eval(Validation.check_phone(country_codes[data['country']], data['phone']).replace('true', 'True').replace('false', 'False').replace('null', 'None'))
             try:
@@ -289,7 +310,7 @@ def profile():
                 response = 0
         
         elif 'iban' in keys:
-            Logs.write_log(log_string(username, f'IBAN Validation - {data["iban"]}'))
+            Logs.write_log(username, f'IBAN Validation - {data["iban"]}')
 
             data = eval(Validation.check_iban(data['iban']).replace('true', 'True').replace('false', 'False').replace('null', 'None'))
             try:
@@ -300,31 +321,40 @@ def profile():
         return jsonify(response)
     else:
         return redirect('/login')
-    
-@app.route('/vpn', methods=['POST'])
+
+# @app.route('/vpn', methods=['GET', 'POST'])
+@app.route('/vpn', methods=['GET', 'POST'])
 def vpn():
-    if LOGGEDIN:
-        switch = request.get_json()
+    if EMP_LOGGEDIN or ADMIN_LOGGEDIN:
+        global vpnData
+        if request.method == 'POST':
+            v = request.get_json()
 
-        if switch == 1:
-            Logs.write_log(log_string(username, f'VPN activated'))
-            data = VPN.run()
+            is_tor_running = VPN.is_process_running()
 
-        elif switch == 0:
-            ip = requests.get('http://httpbin.org/ip').json()['origin']
-            locData = requests.get(f'http://ip-api.com/json/{ip}').json()
-            data = {
-                'query': ip,
-                'country': locData['country'],
-                'city': locData['city'],
-                'regionName': locData['regionName']
-            }
+            # dashboard load
+            if v == 0:
+                vpnData = VPN.proxy_data if is_tor_running else VPN.standard_vpn_fetch()
+                return jsonify(vpnData)
+            
+            # toggle button clicked
+            elif v == 1:
+                if is_tor_running:
+                    Logs.write_log(username, f'VPN Deactivated')
+                    vpnData = VPN.kill()
+                    return jsonify(vpnData)
 
-        return jsonify(data)
+                elif not is_tor_running:
+                    Logs.write_log(username, f'VPN activated')
+                    vpnData = VPN.run()
+                    return jsonify(vpnData)
+        else:
+            # return jsonify(vpnData)
+            return abort(403)
 
-@app.route('/dashboard/phishing', methods=['GET', 'POST'])
+@app.route('/phishing', methods=['GET', 'POST'])
 def phishing():
-    if LOGGEDIN:
+    if EMP_LOGGEDIN or ADMIN_LOGGEDIN:
         if request.method != 'POST':
             return render_template('phishing.html')
         else:
@@ -334,30 +364,30 @@ def phishing():
             if Phishing.run(email) == 0:
                 response = 'safe'
             else:
-                Logs.write_log(log_string(username, 'Caught a spam email !'))
+                Logs.write_log(username, 'Caught a spam email !')
                 response = 'danger'
 
             return jsonify(response)
     else:
         return redirect('/login')
 
-@app.route('/dashboard/password-gen')
+@app.route('/password-gen')
 def password_generator():
-    if LOGGEDIN:
+    if EMP_LOGGEDIN or ADMIN_LOGGEDIN:
         return render_template('password-generator.html')
     else:
         return abort(403)
 
-@app.route('/dashboard/logs')
+@app.route('/logs')
 def logs_manager():
-    if LOGGEDIN:
+    if EMP_LOGGEDIN or ADMIN_LOGGEDIN:
         return render_template('logs.html')
     else:
         return redirect('/login')
 
-@app.route('/dashboard/logs/data')
+@app.route('/logs/data')
 def logs_data():
-    if LOGGEDIN:
+    if EMP_LOGGEDIN or ADMIN_LOGGEDIN:
         data = Logs.read_logs()
         data.reverse()
         return jsonify(data)
@@ -366,32 +396,33 @@ def logs_data():
 
 @app.route('/firewall')
 def firewall():
-    if LOGGEDIN:
+    if EMP_LOGGEDIN or ADMIN_LOGGEDIN:
         return render_template('firewall.html')
     else:
         return redirect('/login')
     
 @app.route('/firewall/create-rule', methods=['GET', 'POST'])
 def firewall_create_rule():
-    if LOGGEDIN:
+    if EMP_LOGGEDIN or ADMIN_LOGGEDIN:
         if request.method == 'POST':
             data = request.get_json()
             response = Firewall.create_rule(name=data['ruleName'], 
                                         dir=data['direction'], 
-                                        status=data['status'], 
+                                        action=data['action'],
                                         localip=data['localIpAddress'], 
                                         remoteip=data['remoteIpAddress'], 
                                         localport=data['localPort'], 
                                         remoteport=data['remotePort'], 
                                         protocol=data['protocol'])
             # response 0, 2, str<>
+            Logs.write_log(username, 'Firewall Rule Created')
             return jsonify(response)
     else:
         return redirect('/login')
     
 @app.route('/firewall/show-rules')
 def firewall_show_rules():
-    if LOGGEDIN:
+    if EMP_LOGGEDIN or ADMIN_LOGGEDIN:
         global firewall_rules
         firewall_rules = Firewall.show_rules()
         return jsonify(firewall_rules)
@@ -400,19 +431,25 @@ def firewall_show_rules():
 
 @app.route('/firewall/delete-rule', methods=['POST'])
 def firewall_delete_rule():
-    if LOGGEDIN:
+    if EMP_LOGGEDIN or ADMIN_LOGGEDIN:
         ruleName = request.get_json()
         Firewall.delete(ruleName)
+        Logs.write_log(username, 'Firewall Rule Deleted')
         return jsonify(0)
     else:
         return redirect('/login')
 
-@app.route('/logout')
+@app.route('/logout', methods=['POST'])
 def logout():
-    global LOGGEDIN
-    if LOGGEDIN:
-        Logs.write_log(log_string(username, 'Logged out'))
-        LOGGEDIN = False
+    global EMP_LOGGEDIN, ADMIN_LOGGEDIN, Employee, directory
+    if (EMP_LOGGEDIN or ADMIN_LOGGEDIN) and request.method == 'POST':
+        Logs.write_log(username, 'Logged out')
+        if EMP_LOGGEDIN:
+            Employee.send_message(f'logout: {username}')
+        elif ADMIN_LOGGEDIN:
+            directory.httpd.shutdown()
+        ComSoc.EMP_LOGGEDIN = False
+        EMP_LOGGEDIN, ADMIN_LOGGEDIN = False, False
     return redirect('/login')
 
 @app.route('/save-reference-image', methods=['POST'])
@@ -438,18 +475,78 @@ def save_reference_image():
         print(f"Error saving image: {e}")
         return {'error': str(e)}, 500
 
+def handle_admin_actions():
+
+    def _continous_scan():
+        while True:
+            scanner.scan_network()
+            time.sleep(2)
+
+    # host the admin directory
+    global directory
+    directory = IntraNetwork.RemoteDirectory()
+    directory.run()
+    # start the continous network scan
+    threading.Thread(target=_continous_scan).start()
+    # start the admin server
+    try:
+        Admin = ComSoc.Admin()
+        threading.Thread(target=Admin.run).start()
+    except:
+        print("[ERROR] Admin server already running")
+
+def handle_emp_actions():
+    # scan the network and find the admin
+    global scanner, admin_ip, Employee
+    print("Scanning network...")
+    scanner.scan_network()
+    admin_ip = scanner._find_admin()
+    print(f"Admin at {admin_ip}")
+    # start the employee server
+    Employee = ComSoc.Employee(admin_ip)
+    threading.Thread(target=Employee.run).start()
+    # send message to admin about the login
+    Employee.send_message(f'login: {username}')
+
+
 @app.route('/face-recon')
 def face_recon():
     f = FaceRecon.FaceRecon(1, face_img)
-    FI.voice_alert('Initializing biometric authentication.')
-
-    global LOGGEDIN
+    global EMP_LOGGEDIN, ADMIN_LOGGEDIN
     if f.isAuthorized():
-        FI.voice_alert(f'Welcome back {name}!')
-        LOGGEDIN = True
-        return redirect('/dashboard') 
+        FI.voice_alert(f'Hi {name}')
+
+        # initiate the network scanner
+        global scanner
+        scanner = IntraNetwork.NetworkScanner()
+
+        if username == 'administrator':
+            ADMIN_LOGGEDIN = True
+            handle_admin_actions()
+            return redirect('/admin-dashboard')
+        
+        EMP_LOGGEDIN = True
+        handle_emp_actions()
+        return redirect('/dashboard')
     else:
         redirect('/login')
+
+@app.route('/admin-dashboard')
+def admin_dashboard():
+    if ADMIN_LOGGEDIN:
+        return render_template('admin-dashboard.html', name=name, role=role, userid=userID)
+    else:
+        return redirect('/login')
+
+@app.route('/admin-dashboard/active-ips')
+def active_ips():
+    if ADMIN_LOGGEDIN:
+        data = dict()
+        for ip in scanner.active_ips:
+            data[ip] = 'Admin' if ip == socket.gethostbyname(socket.gethostname()) else ComSoc.EMP_LOGGEDIN
+        return jsonify(data)
+    else:
+        return abort(403)
 
 if __name__ == '__main__':
 
@@ -457,4 +554,5 @@ if __name__ == '__main__':
     threading.Thread(target=FI.run).start()
     threading.Thread(target=xdev.run).start()
 
-    app.run(debug=True, use_reloader=False, host='0.0.0.0')
+    # app.run(debug=True, use_reloader=False, host='0.0.0.0', port=6969)
+    app.run(debug=True, use_reloader=False, host='0.0.0.0', port=5000)

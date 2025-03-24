@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Create the sales chart
     createSalesChart();
-
+    
     // Add event listener to copy icon
     const copyIcon = document.querySelector('.copy-icon');
     if (copyIcon) {
@@ -33,6 +33,27 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+async function logout() {
+    try {
+        // const response = await fetch('/logout', { method: 'POST' });
+        // const response = await fetch('/logout', );
+        console.log(1)
+        const response = await fetch('/logout', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            // body: JSON.stringify(postData),
+        });
+        console.log(2)
+        if (response.ok) {
+            window.location.href = '/login';
+        } else {
+            console.error('Failed to logout:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Failed to logout:', error);
+    }
+}
 
 async function fetchDashboardData() {
     // Simulating an API call to fetch dashboard data

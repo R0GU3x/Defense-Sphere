@@ -1,6 +1,91 @@
 // Sample initial rules
 let firewallRules = [];
 
+initCustomCursor();
+
+// Custom cursor functionality
+function initCustomCursor() {
+    const cursorDot = document.querySelector('.cursor-dot');
+    const cursorOutline = document.querySelector('.cursor-outline');
+    
+    if (!cursorDot || !cursorOutline) return;
+    
+    // Check if we're not on mobile
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    
+    if (isMobile) {
+        cursorDot.style.display = 'none';
+        cursorOutline.style.display = 'none';
+        return;
+    }
+    
+    document.addEventListener('mousemove', function(e) {
+        // Position the dot directly at cursor position
+        cursorDot.style.left = `${e.clientX}px`;
+        cursorDot.style.top = `${e.clientY}px`;
+        
+        // Position the outline with a slight delay for a trailing effect
+        setTimeout(() => {
+            cursorOutline.style.left = `${e.clientX}px`;
+            cursorOutline.style.top = `${e.clientY}px`;
+        }, 80);
+    });
+    
+    // Add special effects for interactive elements
+    const interactiveElements = document.querySelectorAll('a, button, input, select, .tool-card, .stat-card, .vpn-card');
+    
+    interactiveElements.forEach(el => {
+        el.addEventListener('mouseenter', () => {
+            cursorOutline.style.width = '60px';
+            cursorOutline.style.height = '60px';
+            cursorOutline.style.borderColor = 'rgba(15, 255, 179, 0.8)';
+            cursorDot.style.opacity = '0.5';
+        });
+        
+        el.addEventListener('mouseleave', () => {
+            cursorOutline.style.width = '40px';
+            cursorOutline.style.height = '40px';
+            cursorOutline.style.borderColor = 'rgba(15, 255, 179, 0.5)';
+            cursorDot.style.opacity = '1';
+        });
+    });
+    
+    // Add click effect
+    document.addEventListener('mousedown', () => {
+        cursorDot.style.transform = 'translate(-50%, -50%) scale(0.5)';
+        cursorOutline.style.transform = 'translate(-50%, -50%) scale(0.8)';
+    });
+    
+    document.addEventListener('mouseup', () => {
+        cursorDot.style.transform = 'translate(-50%, -50%) scale(1)';
+        cursorOutline.style.transform = 'translate(-50%, -50%) scale(1)';
+    });
+    
+    // Add magnetic effect to buttons
+    const buttons = document.querySelectorAll('.validate-btn, .vpn-toggle-btn, .add-user-btn');
+    
+    buttons.forEach(button => {
+        button.addEventListener('mousemove', function(e) {
+            const rect = this.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            const moveX = (x - centerX) / 10;
+            const moveY = (y - centerY) / 10;
+            
+            this.style.transform = `translate(${moveX}px, ${moveY}px)`;
+        });
+        
+        button.addEventListener('mouseleave', function() {
+            this.style.transform = '';
+        });
+    });
+}
+
+
 // Fetch rules from the backend
 async function fetchFirewallRules() {
     try {

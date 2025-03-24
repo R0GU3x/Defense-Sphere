@@ -1,9 +1,103 @@
+initCustomCursor();
+
+// Custom cursor functionality
+function initCustomCursor() {
+    const cursorDot = document.querySelector('.cursor-dot');
+    const cursorOutline = document.querySelector('.cursor-outline');
+    
+    if (!cursorDot || !cursorOutline) return;
+    
+    // Check if we're not on mobile
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    
+    if (isMobile) {
+        cursorDot.style.display = 'none';
+        cursorOutline.style.display = 'none';
+        return;
+    }
+    
+    document.addEventListener('mousemove', function(e) {
+        // Position the dot directly at cursor position
+        cursorDot.style.left = `${e.clientX}px`;
+        cursorDot.style.top = `${e.clientY}px`;
+        
+        // Position the outline with a slight delay for a trailing effect
+        setTimeout(() => {
+            cursorOutline.style.left = `${e.clientX}px`;
+            cursorOutline.style.top = `${e.clientY}px`;
+        }, 80);
+    });
+    
+    // Add special effects for interactive elements
+    const interactiveElements = document.querySelectorAll('a, button, input, select, .tool-card, .stat-card, .vpn-card');
+    
+    interactiveElements.forEach(el => {
+        el.addEventListener('mouseenter', () => {
+            cursorOutline.style.width = '60px';
+            cursorOutline.style.height = '60px';
+            cursorOutline.style.borderColor = 'rgba(15, 255, 179, 0.8)';
+            cursorDot.style.opacity = '0.5';
+        });
+        
+        el.addEventListener('mouseleave', () => {
+            cursorOutline.style.width = '40px';
+            cursorOutline.style.height = '40px';
+            cursorOutline.style.borderColor = 'rgba(15, 255, 179, 0.5)';
+            cursorDot.style.opacity = '1';
+        });
+    });
+    
+    // Add click effect
+    document.addEventListener('mousedown', () => {
+        cursorDot.style.transform = 'translate(-50%, -50%) scale(0.5)';
+        cursorOutline.style.transform = 'translate(-50%, -50%) scale(0.8)';
+    });
+    
+    document.addEventListener('mouseup', () => {
+        cursorDot.style.transform = 'translate(-50%, -50%) scale(1)';
+        cursorOutline.style.transform = 'translate(-50%, -50%) scale(1)';
+    });
+    
+    // Add magnetic effect to buttons
+    const buttons = document.querySelectorAll('.validate-btn, .vpn-toggle-btn, .add-user-btn');
+    
+    buttons.forEach(button => {
+        button.addEventListener('mousemove', function(e) {
+            const rect = this.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            const moveX = (x - centerX) / 10;
+            const moveY = (y - centerY) / 10;
+            
+            this.style.transform = `translate(${moveX}px, ${moveY}px)`;
+        });
+        
+        button.addEventListener('mouseleave', function() {
+            this.style.transform = '';
+        });
+    });
+}
 document.addEventListener('DOMContentLoaded', function() {
+    // DOM Elements
     const passwordDisplay = document.getElementById('passwordDisplay');
     const strengthIndicator = document.getElementById('strengthIndicator');
+    const strengthMeter = document.getElementById('strengthMeter');
     const generateBtn = document.getElementById('generateBtn');
-    const lengthOption = document.getElementById('lengthOption');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const copyBtn = document.getElementById('copyBtn');
+    const generateQrBtn = document.getElementById('generateQrBtn');
+    const closeModal = document.getElementById('closeModal');
+    const qrModal = document.getElementById('qrModal');
+    const notification = document.getElementById('notification');
+    const notificationText = document.getElementById('notificationText');
+    
+    // Password options
     const passwordLength = document.getElementById('passwordLength');
+    const lengthValue = document.getElementById('lengthValue');
     const upperOption = document.getElementById('upperOption');
     const lowerOption = document.getElementById('lowerOption');
     const numberOption = document.getElementById('numberOption');
@@ -12,6 +106,20 @@ document.addEventListener('DOMContentLoaded', function() {
     const wordOption = document.getElementById('wordOption');
     const addWord = document.getElementById('addWord');
 
+    // Update length value display
+    passwordLength.addEventListener('input', function() {
+        lengthValue.textContent = this.value;
+    });
+
+    // Toggle word input based on checkbox
+    wordOption.addEventListener('change', function() {
+        addWord.disabled = !this.checked;
+        if (this.checked) {
+            addWord.focus();
+        }
+    });
+
+    // Assess password strength
     function assessPasswordStrength(password) {
         const length = password.length;
         const hasUpperCase = /[A-Z]/.test(password);
@@ -28,50 +136,35 @@ document.addEventListener('DOMContentLoaded', function() {
         return 'Very Weak';
     }
 
+    // Update password strength indicator
     function updatePasswordStrength() {
         const password = passwordDisplay.value;
         if (password === '') {
             strengthIndicator.textContent = '';
-            strengthIndicator.className = 'strength-indicator';
-        } else {
-            const strength = assessPasswordStrength(password);
-            strengthIndicator.textContent = strength;
-            strengthIndicator.className = 'strength-indicator ' + strength.toLowerCase().replace(' ', '-');
+            strengthIndicator.className = 'strength-label';
+            strengthMeter.className = 'strength-meter';
+            return;
         }
+
+        const strength = assessPasswordStrength(password);
+        strengthIndicator.textContent = strength;
+        
+        // Update classes for styling
+        strengthIndicator.className = 'strength-label strength-' + strength.toLowerCase().replace(' ', '-');
+        strengthMeter.className = 'strength-meter meter-' + strength.toLowerCase().replace(' ', '-');
     }
 
+    // Show notification
     function showNotification(message) {
-        // Remove existing notification if any
-        const existingNotification = document.querySelector('.notification');
-        if (existingNotification) {
-            existingNotification.remove();
-        }
-    
-        // Create notification element
-        const notification = document.createElement('div');
-        notification.className = 'notification';
+        notificationText.textContent = message;
+        notification.classList.add('show');
         
-        // Add check icon
-        notification.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M20 6L9 17l-5-5"/>
-            </svg>
-            ${message}
-        `;
-    
-        // Add to document
-        document.body.appendChild(notification);
-    
-        // Trigger animation
-        setTimeout(() => notification.classList.add('show'), 10);
-    
-        // Remove after 3 seconds
         setTimeout(() => {
             notification.classList.remove('show');
-            setTimeout(() => notification.remove(), 300);
         }, 3000);
     }
     
+    // Copy password to clipboard
     function copyPassword() {
         const password = passwordDisplay.value;
         if (password) {
@@ -84,79 +177,49 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Add QR code generation function
-function generateQRCode() {
-    const password = passwordDisplay.value;
-    if (!password) {
-        showNotification('Please generate a password first');
-        return;
+    // Generate QR code
+    function generateQRCode() {
+        const password = passwordDisplay.value;
+        if (!password) {
+            showNotification('Please generate a password first');
+            return;
+        }
+
+        // Clear previous QR code
+        const qrContainer = document.getElementById('qrcode');
+        qrContainer.innerHTML = '';
+
+        // Generate new QR code
+        new QRCode(qrContainer, {
+            text: password,
+            width: 200,
+            height: 200,
+            colorDark: "#0fffb3",
+            colorLight: "#000000",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+
+        // Show modal
+        qrModal.classList.add('show');
     }
 
-    // Create modal for QR code
-    const modal = document.createElement('div');
-    modal.className = 'qr-modal';
-    modal.innerHTML = `
-        <div class="qr-modal-content">
-            <div class="qr-modal-header">
-                <h3>Password QR Code</h3>
-                <button class="close-modal">&times;</button>
-            </div>
-            <div id="qrcode"></div>
-            <p class="qr-note">Scan to copy password</p>
-        </div>
-    `;
-
-    document.body.appendChild(modal);
-
-    // Generate QR code
-    new QRCode(document.getElementById("qrcode"), {
-        text: password,
-        width: 200,
-        height: 200,
-        colorDark: "#0fffb3",  // Using your accent color
-        colorLight: "#16213e", // Using your secondary color
-    });
-
-    // Close modal functionality
-    const closeBtn = modal.querySelector('.close-modal');
-    closeBtn.onclick = () => {
-        modal.remove();
-    };
-
-    // Click outside to close
-    modal.onclick = (e) => {
-        if (e.target === modal) {
-            modal.remove();
-        }
-    };
-}
-
-// Add event listener to QR button
-document.getElementById('generateqr').addEventListener('click', generateQRCode);
-    // Add event listener to the copy button
-    document.querySelector('.copy-btn').addEventListener('click', function(e) {
-        e.preventDefault();
-        copyPassword();
-    });
-
-    // event listener to the copy button
-    document.querySelector('.copy-btn').addEventListener('click', function(e) {
-        e.preventDefault(); // Prevent any default button behavior
-        copyPassword();
-    });
-    
-    passwordDisplay.addEventListener('input', updatePasswordStrength);
-
+    // Generate password
     function generatePassword() {
         let chars = '';
         let password = '';
 
-        const length = lengthOption.checked ? parseInt(passwordLength.value) : 15;
+        const length = parseInt(passwordLength.value);
 
         if (upperOption.checked) chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         if (lowerOption.checked) chars += 'abcdefghijklmnopqrstuvwxyz';
         if (numberOption.checked) chars += '0123456789';
         if (symbolOption.checked) chars += symbols.value;
+
+        // Ensure at least one character type is selected
+        if (chars === '') {
+            showNotification('Please select at least one character type');
+            return;
+        }
 
         for (let i = 0; i < length; i++) {
             password += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -172,7 +235,22 @@ document.getElementById('generateqr').addEventListener('click', generateQRCode);
         updatePasswordStrength();
     }
 
+    // Event listeners
     generateBtn.addEventListener('click', generatePassword);
+    refreshBtn.addEventListener('click', generatePassword);
+    copyBtn.addEventListener('click', copyPassword);
+    generateQrBtn.addEventListener('click', generateQRCode);
+    closeModal.addEventListener('click', () => qrModal.classList.remove('show'));
+    
+    // Close modal when clicking outside
+    qrModal.addEventListener('click', function(e) {
+        if (e.target === qrModal) {
+            qrModal.classList.remove('show');
+        }
+    });
+
+    // Update strength when password is changed
+    passwordDisplay.addEventListener('input', updatePasswordStrength);
 
     // Initialize
     generatePassword();

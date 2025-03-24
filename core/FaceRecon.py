@@ -47,9 +47,9 @@ class FaceRecon:
                     print('Face Recognized')
                     return True
                 else:
-                    return True
+                    # return True
                     cv2.waitKey(1)
-                    time.sleep(0.05)
+                    time.sleep(0.2)
 
 
     # TODO FLET APPLICATION SNPPET (CAUTION ⚠️)

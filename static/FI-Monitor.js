@@ -1,7 +1,89 @@
 // Monitor.js
+initCustomCursor();
 
+// Custom cursor functionality
+function initCustomCursor() {
+    const cursorDot = document.querySelector('.cursor-dot');
+    const cursorOutline = document.querySelector('.cursor-outline');
+    
+    if (!cursorDot || !cursorOutline) return;
+    
+    // Check if we're not on mobile
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    
+    if (isMobile) {
+        cursorDot.style.display = 'none';
+        cursorOutline.style.display = 'none';
+        return;
+    }
+    
+    document.addEventListener('mousemove', function(e) {
+        // Position the dot directly at cursor position
+        cursorDot.style.left = `${e.clientX}px`;
+        cursorDot.style.top = `${e.clientY}px`;
+        
+        // Position the outline with a slight delay for a trailing effect
+        setTimeout(() => {
+            cursorOutline.style.left = `${e.clientX}px`;
+            cursorOutline.style.top = `${e.clientY}px`;
+        }, 80);
+    });
+    
+    // Add special effects for interactive elements
+    const interactiveElements = document.querySelectorAll('a, button, input, select, .tool-card, .stat-card, .vpn-card');
+    
+    interactiveElements.forEach(el => {
+        el.addEventListener('mouseenter', () => {
+            cursorOutline.style.width = '60px';
+            cursorOutline.style.height = '60px';
+            cursorOutline.style.borderColor = 'rgba(15, 255, 179, 0.8)';
+            cursorDot.style.opacity = '0.5';
+        });
+        
+        el.addEventListener('mouseleave', () => {
+            cursorOutline.style.width = '40px';
+            cursorOutline.style.height = '40px';
+            cursorOutline.style.borderColor = 'rgba(15, 255, 179, 0.5)';
+            cursorDot.style.opacity = '1';
+        });
+    });
+    
+    // Add click effect
+    document.addEventListener('mousedown', () => {
+        cursorDot.style.transform = 'translate(-50%, -50%) scale(0.5)';
+        cursorOutline.style.transform = 'translate(-50%, -50%) scale(0.8)';
+    });
+    
+    document.addEventListener('mouseup', () => {
+        cursorDot.style.transform = 'translate(-50%, -50%) scale(1)';
+        cursorOutline.style.transform = 'translate(-50%, -50%) scale(1)';
+    });
+    
+    // Add magnetic effect to buttons
+    const buttons = document.querySelectorAll('.validate-btn, .vpn-toggle-btn, .add-user-btn');
+    
+    buttons.forEach(button => {
+        button.addEventListener('mousemove', function(e) {
+            const rect = this.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            const moveX = (x - centerX) / 10;
+            const moveY = (y - centerY) / 10;
+            
+            this.style.transform = `translate(${moveX}px, ${moveY}px)`;
+        });
+        
+        button.addEventListener('mouseleave', function() {
+            this.style.transform = '';
+        });
+    });
+}
 async function update_data(){
-    const dataResponse = await fetch('/dashboard/FI-Monitor/data');
+    const dataResponse = await fetch('/FI-Monitor/data');
     const data = await dataResponse.json();
     return data;
 }
@@ -9,22 +91,39 @@ async function update_data(){
 async function add_files(){
     const inputField = document.getElementById('filePathInput')
     const file = inputField.value;
+    
+    if (!file.trim()) {
+        showPopup("Please enter a valid file path", "error");
+        return;
+    }
+    
     inputField.value = null;
-    await fetch(`/dashboard/FI-Monitor?task=add&file=${encodeURIComponent(file)}`);
+    await fetch(`/FI-Monitor?task=add&file=${encodeURIComponent(file)}`);
     
     // Create and show popup
+    showPopup("File Added Successfully", "success");
+    
+    // Refresh the file list
+    getFiles();
+}
+
+function showPopup(message, type = "success") {
     const popup = document.createElement('div');
-    popup.style.cssText = `position: fixed; top: 20px; right: 20px; padding: 15px 25px; background-color: white; 
-    border: 2px solid #4CAF50; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 2000;
-    `;
-    popup.textContent = "File Added Successfully";
+    popup.className = 'popup';
+    
+    if (type === "error") {
+        popup.style.borderLeftColor = "var(--status-busy)";
+    }
+    
+    popup.textContent = message;
     document.body.appendChild(popup);
     
     // Remove popup after 3 seconds
     setTimeout(() => {
-        popup.remove();
-    }, 1000);
- 
+        popup.style.opacity = "0";
+        popup.style.transform = "translateX(100%)";
+        setTimeout(() => popup.remove(), 300);
+    }, 3000);
 }
 
 //function for pause/resume button
@@ -32,83 +131,132 @@ async function toggleState(button, count) {
     const data = await update_data()
     const [file, properties] = Object.entries(data)[count]
 
-    // console.log(file, properties);
     console.log(file, properties)
     if (properties.pause == 1) {
         button.textContent = "Resume";
-        button.style.backgroundColor = "#f44336";
-        fetch(`/dashboard/FI-Monitor?task=resume&file=${encodeURIComponent(file)}`);
+        button.className = "resume-button";
+        fetch(`/FI-Monitor?task=resume&file=${encodeURIComponent(file)}`);
     } else {
         button.textContent = "Pause";
-        button.style.backgroundColor = "#4CAF50";
-        fetch(`/dashboard/FI-Monitor?task=pause&file=${encodeURIComponent(file)}`);
+        button.className = "pause-button";
+        fetch(`/FI-Monitor?task=pause&file=${encodeURIComponent(file)}`);
     }
-
 }
+
 // Function to get files
 async function getFiles() {
     const files = await update_data();
     const fileList = document.querySelector('.file-list');
     fileList.innerHTML = '';
-    const pr_buttons = [];
-    count = 0;
-    for (const [file, properties] of Object.entries(files)) {
+    
+    // Update file count
+    const fileCount = document.getElementById('fileCount');
+    const fileEntries = Object.entries(files);
+    fileCount.textContent = fileEntries.length;
+    
+    if (fileEntries.length === 0) {
+        const emptyState = document.createElement('div');
+        emptyState.className = 'empty-state';
+        emptyState.innerHTML = `
+            <i class="fas fa-folder-open" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+            <p>No files are currently being monitored.</p>
+            <p>Add files using the input field above.</p>
+        `;
+        fileList.appendChild(emptyState);
+        return;
+    }
+    
+    let count = 0;
+    for (const [file, properties] of fileEntries) {
         const fileItem = document.createElement('div');
         fileItem.className = 'file-item';
-        // const alertBgColor = properties.alert === 0 ? '#4CAF50' : '#e74c3c';
 
-        let alertBgColor, alertValue;
+        let alertBgColor, alertTextColor, alertValue;
         if (properties.alert === 0) {
-            alertBgColor = '#4CAF50'
-            alertValue = 'All good'
+            alertBgColor = 'rgba(16, 185, 129, 0.1)';
+            alertTextColor = 'var(--status-online)';
+            alertValue = 'All good';
         } else {
-            alertBgColor = '#e74c3c'
-            alertValue = 'Alert'
+            alertBgColor = 'rgba(239, 68, 68, 0.1)';
+            alertTextColor = 'var(--status-busy)';
+            alertValue = 'Alert';
         }
 
-        const prBgColor = properties.pause === 1 ? "#f44336" : "#4CAF50"
-        const prTextContent = properties.pause === 1 ? "Resume" : "Pause"
+        const buttonClass = properties.pause === 1 ? "resume-button" : "pause-button";
+        const buttonText = properties.pause === 1 ? "Resume" : "Pause";
 
-        const pr_button = `<button id="toggleButton" onclick="toggleState(this, ${count})"style=" padding: 8px 16px;
-                border: none;
-                border-radius: 4px;
-                background-color: ${prBgColor};
-                color: white;
-                cursor: pointer;
-                font-size: 14px;
-                transition: background-color 0.3s;">${prTextContent}</button>`
-        pr_buttons.push(pr_button)
         fileItem.innerHTML = `
-        <span class="file-name" style="color: white">
+        <span class="file-name">
+            <i class="fas fa-file-code" style="color: var(--accent-color);"></i>
             ${file}
-            <svg onclick="window.location.href='/dashboard/FI-Monitor?file=${encodeURIComponent(file)}&action=open'" 
-                    style="cursor: pointer; color:0fffb3; width: 20px; height: 20px; margin-left: 8px; vertical-align: middle; transition: stroke 0.3s ease;" 
-                    onmouseover="this.style.stroke='white'" 
-                    onmouseout="this.style.stroke='currentColor'"
-                    viewBox="0 0 24 24" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    stroke-width="2" 
-                    stroke-linecap="round" 
-                    stroke-linejoin="round">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                    <polyline points="14 2 14 8 20 8"></polyline>
-                    <line x1="12" y1="18" x2="12" y2="12"></line>
-                    <line x1="9" y1="15" x2="15" y2="15"></line>
-                </svg>
+            <i class="fas fa-external-link-alt" 
+               onclick="window.location.href='/FI-Monitor?file=${encodeURIComponent(file)}&action=open'" 
+               style="cursor: pointer; color: var(--accent-color); margin-left: 8px; font-size: 0.875rem;"></i>
         </span>
-        <span class="alert-count" style="background-color: ${alertBgColor}">${alertValue}</span>
+        <span class="alert-count" style="background-color: ${alertBgColor}; color: ${alertTextColor};">${alertValue}</span>
         <div class="action-buttons">
-            ${pr_button}
-            <button class="action-button clear-button" onclick="fetch('/dashboard/FI-Monitor?task=clear&file=${encodeURIComponent(file)}')">Clear</button>
-            <button class="action-button remove-button" onclick="fetch('/dashboard/FI-Monitor?task=remove&file=${encodeURIComponent(file)}')">Remove</button>
+            <button class="${buttonClass}" onclick="toggleState(this, ${count})">${buttonText}</button>
+            <button class="clear-button" onclick="clearFile('${encodeURIComponent(file)}')">Clear</button>
+            <button class="remove-button" onclick="removeFile('${encodeURIComponent(file)}')">Remove</button>
         </div>`;
+        
         fileList.appendChild(fileItem);
-
         count++;
     }
 }
 
-// Call the function when DOM is loaded
-document.addEventListener('DOMContentLoaded', getFiles);
+function clearFile(file) {
+    fetch(`/FI-Monitor?task=clear&file=${file}`);
+    showPopup("File alerts cleared");
+    setTimeout(getFiles, 500);
+}
 
+function removeFile(file) {
+    fetch(`/FI-Monitor?task=remove&file=${file}`);
+    showPopup("File removed from monitoring");
+    setTimeout(getFiles, 500);
+}
+
+// Call the function when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    getFiles();
+    
+    // Add keypress event for the input field
+    const inputField = document.getElementById('filePathInput');
+    inputField.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            add_files();
+        }
+    });
+    
+    // Add CSS for button styles
+    const style = document.createElement('style');
+    style.textContent = `
+        .pause-button { 
+            background-color: var(--status-away); 
+            color: var(--primary-bg);
+        }
+        .resume-button { 
+            background-color: var(--status-online); 
+            color: var(--primary-bg);
+        }
+        .clear-button { 
+            background-color: var(--card-3); 
+            color: var(--text-primary);
+        }
+        .remove-button { 
+            background-color: var(--status-busy); 
+            color: var(--text-primary);
+        }
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            text-align: center;
+            color: var(--text-muted);
+        }
+    `;
+    document.head.appendChild(style);
+});

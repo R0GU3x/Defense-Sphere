@@ -18,7 +18,8 @@ if 'public_key.pem' not in os.listdir('core/keys'):
 
 private_key, public_key = c.load_keys()
 
-def write_log(log:str):
+def write_log(uname:str|int, action:str):
+    log = f'<span title="{uname}"> {action} </span>'
     d = c.encrypt_message(log, public_key)
     data = base64.b64encode(d).decode()
 
