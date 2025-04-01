@@ -4,6 +4,7 @@ import os, psutil, requests
 process_name = 'tor.exe'
 
 errorCount = 0
+rq = None
 
 def standard_vpn_fetch() -> dict:
         ip = requests.get('http://httpbin.org/ip').json()['origin']

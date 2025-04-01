@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, jsonify, abort, request
+from flask import Flask, render_template, redirect, jsonify, abort, request, make_response
 from requests_tor import RequestsTor
 import psutil, threading, requests, os, base64, time, socket
 import core.Auth as auth
@@ -76,9 +76,7 @@ def login():
             f.write(face)
 
         if response == 0:
-            # Logs.write_log(f'<span title="{username}"> <b>Action:</b> Login Successful </span>')
             Logs.write_log(username, 'Login Successful')
-            # return redirect('/dashboard')
             return redirect('/face-recon')
         elif response == 1:
             Logs.write_log(userID, 'Incorrect Password')
@@ -102,6 +100,7 @@ _2FA = False
 def forgot_password():
     if request.method == 'POST':
         dataType, prompt = request.get_json().values()
+        global row
         row = auth.forgot_password(dataType, prompt)
         print(row)
         if row:
@@ -112,35 +111,27 @@ def forgot_password():
             with open(face_img, 'wb') as f:
                 f.write(face_data)
 
-            FI.voice_alert('Initiating Biometric Scan')
             f = FaceRecon.FaceRecon(1, face_img)
 
             if f.isAuthorized():
+                global _2FA
+                _2FA = True
                 Logs.write_log(prompt, 'Biometric Scan Successful')
-                return redirect('/reset-password')
+                return jsonify(1)
 
             return redirect('/forgot-password')
         
     return render_template('forgot-password.html')
 
-
-@app.route('/two-factor-auth', methods=['GET', 'POST'])
-def two_factor_authentication():
+@app.route('/reset-password', methods=['GET','POST', 'HEAD'])
+def reset_password():
     if request.method == 'POST':
-        # authentication = request.args.get('authentication')
-        data = request.get_json()
-        print(data)
+        new_password = request.get_json()['password']
+        global row
+        auth.reset_password(row, new_password)
         return jsonify(1)
     
-    return render_template('two-factor-auth.html')
-    # return render_template('reset-password.html')
-
-@app.route('/reset-password')
-def reset_password():
-    if _2FA:
-        return render_template('reset-password.html')
-    else:
-        return abort(403)
+    return render_template('reset-password.html')
 
 @app.route('/settings')
 def settings():
@@ -180,6 +171,7 @@ def register():
         userID = auth.register(firstName, role, username, password, register_face)
 
         Logs.write_log(userID, 'New account registered')
+        print('Account Registered')
 
         return redirect('/login')
 
@@ -555,4 +547,4 @@ if __name__ == '__main__':
     threading.Thread(target=xdev.run).start()
 
     # app.run(debug=True, use_reloader=False, host='0.0.0.0', port=6969)
-    app.run(debug=True, use_reloader=False, host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000)

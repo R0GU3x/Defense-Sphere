@@ -38,13 +38,11 @@ async function logout() {
     try {
         // const response = await fetch('/logout', { method: 'POST' });
         // const response = await fetch('/logout', );
-        console.log(1)
         const response = await fetch('/logout', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             // body: JSON.stringify(postData),
         });
-        console.log(2)
         if (response.ok) {
             window.location.href = '/login';
         } else {
@@ -61,7 +59,6 @@ async function fetchDashboardData() {
     let data = await fetch('/dashboard/data')
     .then(response => response.json())
     
-    console.log(data)
     const dashboardData = {
         ip: 0,
         todaysUsers: 670,
@@ -180,7 +177,6 @@ function validateEmail() {
     })
     .then(response => response.json())
     .then(data => {
-        console.log(data);
         if (data === 1) {
             resultDiv.innerHTML = `<span style="color: #0fffb3">✓ Valid email address</span>`;
         } else {
@@ -215,7 +211,6 @@ function validatePhone() {
     })
     .then(response => response.json())
     .then(data => {
-        console.log(data);
         if (data === 1) {
             resultDiv.innerHTML = `<span style="color: #0fffb3">✓ Valid Phone Number</span>`;
         } else {
@@ -249,7 +244,6 @@ function validateIBAN() {
     })
     .then(response => response.json())
     .then(data => {
-        console.log(data);
         if (data === 1) {
             resultDiv.innerHTML = `<span style="color: #0fffb3">✓ Valid IBAN</span>`;
         } else {
@@ -282,7 +276,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     })
     .then(response => response.json())
     .then(data => {
-        console.log(data);
         setUserLocation(data);
     })
 });

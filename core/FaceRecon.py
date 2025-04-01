@@ -33,7 +33,7 @@ class FaceRecon:
 
             if ret:
 
-                cv2.imshow('Facial Recognition Console', frame)
+                # cv2.imshow('Facial Recognition Console', frame)
 
                 if self.counter % 30 == 0:
                     try:

@@ -140,8 +140,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 <p>Your account has been created. Please copy your User ID for future reference.</p>
                 <p style="font-size: 24px; margin: 20px 0; text-align: center; letter-spacing: 2px; font-weight: bold;">${userId}</p>
                 <div style="display: flex; justify-content: space-between; margin-top: 20px;">
-                    <button id="copyButton" style="flex: 1; padding: 10px 20px; border: none; background-color: #007bff; color: white; border-radius: 5px; cursor: pointer; margin-right: 10px;">Copy User ID</button>
-                    <button id="closeButton" style="flex: 1; padding: 10px 20px; border: 2px solid #007bff; background-color: white; color: #007bff; border-radius: 5px; cursor: pointer;">Close</button>
+                    <button id="copyButton" style="flex: 1; padding: 10px 20px; border: none; background-color: #0fffb3; color: #0f172a; border-radius: 5px; cursor: pointer; margin-right: 10px; font-weight: 600;">Copy User ID</button>
+                    <button id="closeButton" style="flex: 1; padding: 10px 20px; border: 2px solid #0fffb3; background-color: transparent; color: #0fffb3; border-radius: 5px; cursor: pointer; font-weight: 600;">Close</button>
                 </div>
             </div>
         `;
@@ -163,19 +163,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     async function submitRegistration() {
-        // Get and disable the button
-        console.log(1);
+        // Get and disable the button        
         const registerBtn = document.getElementById('register-btn');
         registerBtn.disabled = true;
         registerBtn.textContent = 'Creating your account...';
         registerBtn.style.opacity = '0.7';
         registerBtn.style.cursor = 'not-allowed';
 
-        console.log(2);
-
         try {
-
-            console.log(3);
 
             const formData = new FormData(form);
             const data = {};
@@ -183,8 +178,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 data[key] = value;
             });
             
-            console.log(4, data);
-
             await fetch('/register', {
                 method: 'POST',
                 headers: {
@@ -194,15 +187,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: new URLSearchParams(data)
             });
 
-            console.log(5)
-
             // Fetch user data after registration
             const response = await fetch("/register/data");
-            console.log(6, response)
-
             const userData = await response.json();
-
-            console.log(7, userData)
 
             if (userData.userID === -1) {
                 showError("This user already exists. Please login.");
@@ -223,4 +210,44 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     form.addEventListener('submit', handleSubmit);
+
+    // Add password toggle functionality
+    const togglePassword = document.querySelector('.toggle-password');
+    if (togglePassword) {
+        togglePassword.addEventListener('click', function() {
+            const input = this.closest('.password-group').querySelector('input');
+            const icon = this.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+    }
+
+    // Add this after the DOMContentLoaded event listener starts
+    const togglePasswordContainer = document.querySelector('.toggle-password-container');
+    if (togglePasswordContainer) {
+        togglePasswordContainer.style.position = 'absolute';
+        togglePasswordContainer.style.right = '12px';
+        togglePasswordContainer.style.top = '35%';
+        togglePasswordContainer.style.transform = 'translateY(-50%)';
+        togglePasswordContainer.style.zIndex = '2';
+        togglePasswordContainer.style.display = 'flex';
+        togglePasswordContainer.style.alignItems = 'center';
+        togglePasswordContainer.style.justifyContent = 'center';
+        togglePasswordContainer.style.height = '100%';
+        togglePasswordContainer.style.pointerEvents = 'auto';
+    }
+
+    // Also add this to ensure the input field has proper padding
+    if (passwordInput) {
+        passwordInput.style.paddingRight = '45px';
+    }
 });
+

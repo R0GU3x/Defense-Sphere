@@ -131,7 +131,6 @@ async function toggleState(button, count) {
     const data = await update_data()
     const [file, properties] = Object.entries(data)[count]
 
-    console.log(file, properties)
     if (properties.pause == 1) {
         button.textContent = "Resume";
         button.className = "resume-button";

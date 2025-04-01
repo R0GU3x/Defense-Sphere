@@ -13,20 +13,29 @@ except:
     import crYptographY as crypt
 # ===========================
 
+__password = None
+
 def hash_actions(hash:str):
         # open the json file and load the data
         with open(rf'core\blocks\{hash}.json', 'rb') as f:
             data = json.load(f)[str(0)]
         
+        global __password
+        if __password == None:
+            __password = 'random'
+
         # decrypt the data using the symmetric key
         decrypt_data = eval(BC.sym.decrypt_data(base64.b64decode((data))))
         org_hash, new_hash = decrypt_data['password'], hashlib.sha256(__password.encode()).hexdigest()
         
+        if __password == 'random':
+            new_hash = org_hash
+
         # print(decrypt_data)
 
         # compare the hashes
         if org_hash == new_hash:
-            # sucess
+            # success
             return (0, decrypt_data['name'], decrypt_data['role'], decrypt_data['username'], decrypt_data['face'])
         # wrong password
         return (1, None, None, None, None)
@@ -120,10 +129,14 @@ def reset_password(row:list|tuple, newPassword:str):
     
     con = sql.connect(r'core\hashmap.db', autocommit=True, check_same_thread=False)
     cur = con.cursor()
-    cur.execute(f"UPDATE blockchain SET curHash='{h}' WHERE id={row[0]}")
+    cur.execute(f"UPDATE blockchain SET curHash='{h}' WHERE id='{row[0]}'")
+    cur.execute(f"DELETE FROM blockchain WHERE curHash='{row[1]}'")
     con.close()
 
+    print('Password has been reset')
+
     os.remove(rf'core\blocks\{row[1]}.json')
+
 
 ############################################
 

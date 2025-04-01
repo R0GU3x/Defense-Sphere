@@ -94,7 +94,6 @@ async function fetchFirewallRules() {
             throw new Error('Network response was not ok');
         }
         const data = await response.json();
-        console.log('Fetched rules:', data); // Log fetched data
         firewallRules = data;
         renderRules(firewallRules);
 
@@ -224,9 +223,6 @@ document.getElementById('addRuleForm').addEventListener('submit', async function
             body: JSON.stringify(newRule),
         });
 
-        // Log the response status
-        console.log('Response status:', response.status);
-
         // Check if the response is ok (status in the range 200-299)
         if (!response.ok) {
             console.error('Network response was not ok:', response.statusText);
@@ -234,7 +230,6 @@ document.getElementById('addRuleForm').addEventListener('submit', async function
         }
 
         const responseData = await response.json(); // Parse the JSON response
-        console.log('Response data:', responseData); // Log the response data
 
         // Handle the response based on the specified conditions
         if (responseData === 0) {

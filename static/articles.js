@@ -124,9 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const response = await fetch("/articles/data")
       const data = await response.json()
-  
-      console.log("Fetched data:", data)
-  
+    
       if (data.articles && data.articles.length > 0) {
         // Update hero section with the latest article
         updateHeroSection(data.articles[0])
