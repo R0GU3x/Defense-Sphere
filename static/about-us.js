@@ -1,5 +1,8 @@
 // Ensure the DOM is fully loaded before executing the script
 document.addEventListener("DOMContentLoaded", () => {
+  // Initialize background effects
+  initBackgroundEffects()
+
   // Page transition logic
   const links = document.querySelectorAll(".transition-link")
 
@@ -16,12 +19,128 @@ document.addEventListener("DOMContentLoaded", () => {
     })
   })
 
-  // Initialize custom cursor
-  initCustomCursor()
-
   // Call the function to animate sections
   animateSections()
 })
+
+// Background effects initialization
+function initBackgroundEffects() {
+  // Create background container if it doesn't exist
+  if (!document.querySelector(".background-animation")) {
+    const backgroundContainer = document.createElement("div")
+    backgroundContainer.className = "background-animation"
+
+    const digitalGrid = document.createElement("div")
+    digitalGrid.className = "digital-grid"
+
+    const particlesContainer = document.createElement("div")
+    particlesContainer.className = "particles-container"
+
+    const binaryRainContainer = document.createElement("div")
+    binaryRainContainer.className = "binary-rain-container"
+
+    backgroundContainer.appendChild(digitalGrid)
+    backgroundContainer.appendChild(particlesContainer)
+    backgroundContainer.appendChild(binaryRainContainer)
+
+    document.body.insertBefore(backgroundContainer, document.body.firstChild)
+  }
+
+  // Initialize particles
+  initParticles()
+
+  // Initialize glowing orbs
+  initGlowOrbs()
+
+  // Initialize binary rain
+  initBinaryRain()
+
+  // Add scan line
+  const scanLine = document.createElement("div")
+  scanLine.className = "scan-line"
+  document.querySelector(".background-animation").appendChild(scanLine)
+}
+
+// Create particles
+function initParticles() {
+  const container = document.querySelector(".particles-container")
+  const particleCount = window.innerWidth < 768 ? 30 : 60
+
+  for (let i = 0; i < particleCount; i++) {
+    const size = Math.random() * 4 + 1
+    const particle = document.createElement("div")
+    particle.className = "particle"
+    particle.style.width = `${size}px`
+    particle.style.height = `${size}px`
+    particle.style.left = `${Math.random() * 100}%`
+    particle.style.top = `${Math.random() * 100}%`
+    particle.style.opacity = `${Math.random() * 0.5 + 0.1}`
+
+    // Set animation properties
+    const duration = Math.random() * 50 + 30
+    particle.style.animation = `floatParticle ${duration}s linear infinite`
+    container.appendChild(particle)
+  }
+}
+
+// Create glowing orbs
+function initGlowOrbs() {
+  const container = document.querySelector(".background-animation")
+  const orbCount = window.innerWidth < 768 ? 2 : 4
+
+  for (let i = 0; i < orbCount; i++) {
+    const orb = document.createElement("div")
+    orb.className = "glow-orb"
+
+    // Random size between 150px and 300px
+    const size = Math.random() * 150 + 150
+    orb.style.width = `${size}px`
+    orb.style.height = `${size}px`
+
+    // Random position
+    orb.style.left = `${Math.random() * 100}%`
+    orb.style.top = `${Math.random() * 100}%`
+
+    // Animation
+    const duration = Math.random() * 60 + 60
+    orb.style.transition = `transform ${duration}s ease-in-out, left ${duration}s ease-in-out, top ${duration}s ease-in-out`
+
+    container.appendChild(orb)
+
+    // Move orbs slowly
+    setInterval(() => {
+      orb.style.left = `${Math.random() * 100}%`
+      orb.style.top = `${Math.random() * 100}%`
+    }, duration * 1000)
+  }
+}
+
+// Create binary rain effect
+function initBinaryRain() {
+  const container = document.querySelector(".binary-rain-container")
+  const columnCount = Math.floor(window.innerWidth / 20)
+
+  for (let i = 0; i < columnCount; i++) {
+    const column = document.createElement("div")
+    column.className = "binary-column"
+
+    // Generate binary content
+    let binaryString = ""
+    const length = Math.floor(Math.random() * 20) + 10
+    for (let j = 0; j < length; j++) {
+      binaryString += Math.random() > 0.5 ? "1" : "0"
+    }
+    column.textContent = binaryString
+
+    // Position and animation
+    column.style.left = `${i * 20}px`
+    const duration = Math.random() * 20 + 10
+    const delay = Math.random() * 10
+
+    column.style.animation = `binaryRain ${duration}s linear ${delay}s infinite`
+    container.appendChild(column)
+  }
+}
 
 // Function to animate sections
 const animateSections = () => {
@@ -37,114 +156,6 @@ const animateSections = () => {
       section.style.opacity = 1 // Fade in
       section.style.transform = "translateY(0)" // Move to original position
     }, 100) // Delay for 100ms before starting the animation
-  })
-}
-
-// Custom cursor functionality
-function initCustomCursor() {
-  const cursorDot = document.querySelector(".cursor-dot")
-  const cursorOutline = document.querySelector(".cursor-outline")
-
-  if (!cursorDot || !cursorOutline) return
-
-  // Check if we're not on mobile
-  const isMobile = window.matchMedia("(max-width: 768px)").matches
-
-  if (isMobile) {
-    cursorDot.style.display = "none"
-    cursorOutline.style.display = "none"
-    return
-  }
-
-  document.addEventListener("mousemove", (e) => {
-    // Position the dot directly at cursor position
-    cursorDot.style.left = `${e.clientX}px`
-    cursorDot.style.top = `${e.clientY}px`
-
-    // Position the outline with a slight delay for a trailing effect
-    setTimeout(() => {
-      cursorOutline.style.left = `${e.clientX}px`
-      cursorOutline.style.top = `${e.clientY}px`
-    }, 80)
-  })
-
-  // Add special effects for interactive elements
-  const interactiveElements = document.querySelectorAll("a, button, input, select, .leader-card, .stat-item")
-
-  interactiveElements.forEach((el) => {
-    el.addEventListener("mouseenter", () => {
-      cursorOutline.style.width = "60px"
-      cursorOutline.style.height = "60px"
-      cursorOutline.style.borderColor = "rgba(15, 255, 179, 0.8)"
-      cursorDot.style.opacity = "0.5"
-    })
-
-    el.addEventListener("mouseleave", () => {
-      cursorOutline.style.width = "40px"
-      cursorOutline.style.height = "40px"
-      cursorOutline.style.borderColor = "rgba(15, 255, 179, 0.5)"
-      cursorDot.style.opacity = "1"
-    })
-  })
-
-  // Add click effect
-  document.addEventListener("mousedown", () => {
-    cursorDot.style.transform = "translate(-50%, -50%) scale(0.5)"
-    cursorOutline.style.transform = "translate(-50%, -50%) scale(0.8)"
-  })
-
-  document.addEventListener("mouseup", () => {
-    cursorDot.style.transform = "translate(-50%, -50%) scale(1)"
-    cursorOutline.style.transform = "translate(-50%, -50%) scale(1)"
-  })
-
-  // Add magnetic effect to buttons
-  const buttons = document.querySelectorAll(".primary-button, .cta-button")
-
-  buttons.forEach((button) => {
-    button.addEventListener("mousemove", function (e) {
-      const rect = this.getBoundingClientRect()
-      const x = e.clientX - rect.left
-      const y = e.clientY - rect.top
-
-      const centerX = rect.width / 2
-      const centerY = rect.height / 2
-
-      const moveX = (x - centerX) / 10
-      const moveY = (y - centerY) / 10
-
-      this.style.transform = `translate(${moveX}px, ${moveY}px)`
-    })
-
-    button.addEventListener("mouseleave", function () {
-      this.style.transform = ""
-    })
-  })
-}
-
-// Header scroll effect
-function initHeaderScroll() {
-  const header = document.getElementById("main-header")
-
-  window.addEventListener("scroll", () => {
-    if (window.scrollY > 50) {
-      header.classList.add("scrolled")
-    } else {
-      header.classList.remove("scrolled")
-    }
-  })
-}
-
-// Mobile menu functionality
-function initMobileMenu() {
-  const menuToggle = document.querySelector(".mobile-menu-toggle")
-  const navLinks = document.querySelector(".nav-links")
-
-  if (!menuToggle || !navLinks) return
-
-  menuToggle.addEventListener("click", () => {
-    navLinks.classList.toggle("active")
-    menuToggle.classList.toggle("active")
   })
 }
 
@@ -171,6 +182,8 @@ function initSmoothScroll() {
 function initGSAPAnimations() {
   // Ensure GSAP is loaded
   if (typeof gsap === "undefined" || typeof ScrollTrigger === "undefined") return
+
+  gsap.registerPlugin(ScrollTrigger);
 
   // Hero section animation
   gsap.from(".hero .container", {
@@ -248,4 +261,3 @@ function initPageTransitions() {
     })
   })
 }
-

@@ -39,68 +39,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add event listener to copy button
     initCopyButton();
 
-    // Check firstLogin status
-    // const firstLogin = true; // Replace this with the actual logic to determine firstLogin
+    // Initialize notifications
+    initNotifications();
 
-    // if (firstLogin) {
-    //     // Send POST request to /vpn with action 0
-    //     fetch('/vpn', {
-    //         method: 'POST',
-    //         headers: { 'Content-Type': 'application/json' },
-    //         body: JSON.stringify(0) // Sending action 0
-    //     })
-    //     .then(response => {
-    //         if (response.ok) {
-    //             // After successful POST, send GET request to /vpn
-    //             return fetch('/vpn', {
-    //                 method: 'GET',
-    //             });
-    //         } else {
-    //             console.error('Failed to send POST request to /vpn:', response.statusText);
-    //         }
-    //     })
-    //     .then(response => {
-    //         if (response && response.ok) {
-    //             return response.json();
-    //         } else {
-    //             console.error('Failed to fetch VPN status:', response.statusText);
-    //         }
-    //     })
-    //     .then(data => {
-    //         if (data) {
-    //             // Update the UI with the VPN status
-    //             const vpnElement = document.getElementById('vpn');
-    //             vpnElement.textContent = data.status; // Assuming the response has a 'status' field
-    //             setUserLocation(data); // Update user location if needed
-    //         }
-    //     })
-    //     .catch(error => {
-    //         console.error('Error during VPN requests:', error);
-    //     });
-    // } else {
-    //     // If not first login, just send GET request to /vpn
-    //     fetch('/vpn', {
-    //         method: 'GET',
-    //     })
-    //     .then(response => {
-    //         if (response.ok) {
-    //             return response.json();
-    //         } else {
-    //             console.error('Failed to fetch VPN status:', response.statusText);
-    //         }
-    //     })
-    //     .then(data => {
-    //         if (data) {
-    //             // Update the UI with the VPN status
-    //             const vpnElement = document.getElementById('vpn');
-    //             vpnElement.textContent = data.status; // Assuming the response has a 'status' field
-    //             setUserLocation(data); // Update user location if needed
-    //         }
-    //     })
-    //     .catch(error => {
-    //         console.error('Error fetching VPN status:', error);
-    //     });
-    // }
+    // Add notification sound
+    loadNotificationSound();
 });
 
 // Custom cursor functionality
@@ -132,7 +75,7 @@ function initCustomCursor() {
     });
     
     // Add special effects for interactive elements
-    const interactiveElements = document.querySelectorAll('a, button, input, select, .tool-card, .stat-card, .vpn-card');
+    const interactiveElements = document.querySelectorAll('a, button, input, select, .tool-card, .stat-card, .vpn-card, .notification-item');
     
     interactiveElements.forEach(el => {
         el.addEventListener('mouseenter', () => {
@@ -367,12 +310,9 @@ function setUserLocation(data) {
 // Logout function
 async function logout() {
     try {
-        // const response = await fetch('/logout', { method: 'POST' });
-        // const response = await fetch('/logout', );
         const response = await fetch('/logout', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            // body: JSON.stringify(postData),
         });
         if (response.ok) {
             window.location.href = '/login';
@@ -384,78 +324,17 @@ async function logout() {
     }
 }
 
-//! Toggle VPN function [ORIGINAL]
-// async function toggleVPN(action1, action2) {
-//     const vpnElement = document.getElementById('vpn');
-    
-//     if (action1 === 'GET') {
-//         // Load the page or refresh the page using GET method
-//         try {
-//             const response = await fetch('/vpn', {
-//                 method: 'GET',
-//             });
-//             if (response.ok) {
-//                 const data = await response.json();
-//                 // Update the VPN status based on the response
-//                 vpnElement.textContent = data.status; // Assuming the response has a 'status' field
-//                 setUserLocation(data); // Update user location if needed
-//             } else {
-//                 console.error('Failed to load VPN status:', response.statusText);
-//             }
-//         } catch (error) {
-//             console.error('Error fetching VPN status:', error);
-//         }
-//     } else if (action1 === 'POST') {
-//         // Activate using POST method
-//         vpnElement.textContent = 'Connecting...';
-//         vpnElement.style.color = '#FFA500'; // Orange color for connecting state
-//         showPopup(); // Show the connecting popup
-
-//         // Add loading dots animation
-//         let dots = 0;
-//         const loadingInterval = setInterval(() => {
-//             vpnElement.textContent = 'Connecting' + '.'.repeat(dots);
-//             dots = (dots + 1) % 4;
-//         }, 500);
-
-//         try {
-//             const response = await fetch('/vpn', {
-//                 method: 'POST',
-//                 headers: { 'Content-Type': 'application/json' },
-//                 // body: JSON.stringify({ action: 1 }), // Sending action as part of the body
-//                 body: JSON.stringify(action2), // Sending action as part of the body
-//             });
-//             const data = await response.json();
-//             clearInterval(loadingInterval);
-//             vpnElement.textContent = 'Connected';
-//             vpnElement.style.color = getComputedStyle(document.documentElement).getPropertyValue('--accent-color');
-//             setUserLocation(data); // Update user location if needed
-//             startUptime(); // Start uptime if connected
-//         } catch (error) {
-//             clearInterval(loadingInterval);
-//             console.error('Error toggling VPN:', error);
-//             vpnElement.textContent = 'Not Connected'; // Reset to original state
-//         }
-//     } else {
-//         console.error('Invalid action for toggleVPN:', action1);
-//     }
-// }
-
 // Toggle VPN function
 async function toggleVPN(v) {
     const vpnElement = document.getElementById('vpn');
     
-    // if (method === 'POST') {
-        // Activate using POST method
     // Set loading state
     document.getElementById('ip').textContent = 'Loading...';
     document.getElementById('user-country').textContent = 'Loading...';
     document.getElementById('user-region').textContent = 'Loading...';
 
-
     vpnElement.textContent = 'Connecting...';
     vpnElement.style.color = '#FFA500'; // Orange color for connecting state
-    // showPopup(); // Show the connecting popup
 
     // Add loading dots animation
     let dots = 0;
@@ -465,11 +344,6 @@ async function toggleVPN(v) {
     }, 500);
 
     try {
-
-        // if (v === 1){
-        //     showPopup(); 
-        // }
-
         const response = await fetch('/vpn', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -482,7 +356,6 @@ async function toggleVPN(v) {
         vpnElement.style.color = getComputedStyle(document.documentElement).getPropertyValue('--accent-color');
 
         setUserLocation(data); // Update user location if needed
-        // startUptime(); // Start uptime if connected
 
         if (v === 1){
             startUptime(); 
@@ -492,9 +365,6 @@ async function toggleVPN(v) {
         console.error('Error toggling VPN:', error);
         vpnElement.textContent = 'Not Connected'; // Reset to original state
     }
-    // } else {
-    //     console.error('Invalid action for toggleVPN:', action1);
-    // }
 }
 
 // Show popup function
@@ -739,8 +609,8 @@ function filterUsers(searchTerm) {
         let matchCount = 0;
         
         userItems.forEach(item => {
-            const userName = item.dataset.userName.toLowerCase();
-            const userRole = item.querySelector('.user-role').textContent.toLowerCase();
+            const userName = item.dataset.userName?.toLowerCase() || '';
+            const userRole = item.querySelector('.user-role')?.textContent.toLowerCase() || '';
             
             if (userName.includes(searchTerm) || userRole.includes(searchTerm)) {
                 item.style.display = 'flex';
@@ -783,7 +653,7 @@ function updateUserStatus() {
         const lastActive = randomUser.querySelector('.last-active');
         
         // Get current status
-        const currentStatus = randomUser.dataset.userStatus;
+        const currentStatus = randomUser.dataset.userStatus || 'offline';
         
         // Generate a new random status
         const statuses = ['active', 'away', 'busy', 'offline'];
@@ -878,8 +748,184 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', function() {
     const vpnCard = document.querySelector('.stat-card[onclick="toggleVPN(0)"]');
     if (vpnCard) {
-        // vpnCard.addEventListener('click', toggleVPN);
-        // add event listen to toggle vpn with a paremter 1
         vpnCard.addEventListener('click', () => toggleVPN(0));
     }
 });
+
+// --- Enhanced Notification System ---
+
+// Global variables for notifications
+let lastNotificationIds = [];
+let notificationPanelOpen = false;
+let notificationSound;
+
+// Load notification sound
+function loadNotificationSound() {
+    notificationSound = new Audio();
+    notificationSound.src = '/static/sounds/notification.mp3';
+    notificationSound.load();
+}
+
+// Initialize notifications
+function initNotifications() {
+    const notificationBtn = document.querySelector('.notification-btn');
+    const notificationPanel = document.getElementById('notification-panel');
+    const notificationBadge = document.querySelector('.notification-badge');
+    const closeBtn = document.getElementById('close-notifications');
+
+    if (!notificationBtn || !notificationPanel || !closeBtn) return;
+
+    notificationPanel.classList.remove('show');
+    let notificationPanelOpen = false;
+
+    notificationBtn.addEventListener('click', function () {
+        notificationPanel.classList.toggle('show');
+        notificationPanelOpen = notificationPanel.classList.contains('show');
+        if (notificationPanelOpen) fetchAndRenderNotifications();
+    });
+
+    closeBtn.addEventListener('click', function () {
+        notificationPanel.classList.remove('show');
+        notificationPanelOpen = false;
+    });
+
+    document.addEventListener('click', function(event) {
+        if (notificationPanelOpen && 
+            !notificationPanel.contains(event.target) && 
+            !notificationBtn.contains(event.target)) {
+            notificationPanel.classList.remove('show');
+            notificationPanelOpen = false;
+        }
+    });
+
+    // Fetch every 1 second
+    setInterval(async () => {
+        const notifications = await fetchAndRenderNotifications();
+        showNotificationBadge(notifications);
+    }, 1000);
+
+    fetchAndRenderNotifications().then(showNotificationBadge);
+}
+
+// Check if there are new notifications
+function isNewNotification(notifications) {
+    if (!notifications || !notifications.length) return false;
+    
+    const ids = notifications.map(n => n.id);
+    const newNotifications = notifications.filter(n => !n.read && !lastNotificationIds.includes(n.id));
+    lastNotificationIds = ids;
+    
+    return newNotifications.length > 0;
+}
+
+// Play notification sound
+function playNotificationSound() {
+    if (notificationSound && typeof notificationSound.play === 'function') {
+        notificationSound.currentTime = 0;
+        notificationSound.play().catch(err => {
+            console.log('Error playing notification sound:', err);
+        });
+    }
+}
+
+// Mark all notifications as read
+async function markAllAsRead() {
+    try {
+        const response = await fetch('/notifications/mark-all-read', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        
+        if (response.ok) {
+            // Update UI to reflect all notifications as read
+            const notificationItems = document.querySelectorAll('.notification-item');
+            notificationItems.forEach(item => {
+                item.classList.add('read');
+            });
+            
+            // Update badge
+            const notificationBadge = document.querySelector('.notification-badge');
+            notificationBadge.style.display = 'none';
+            notificationBadge.textContent = '';
+        }
+    } catch (error) {
+        console.error('Failed to mark notifications as read:', error);
+    }
+}
+
+// Fetch and render notifications
+async function fetchAndRenderNotifications() {
+    const notificationList = document.getElementById('notification-list');
+    if (!notificationList) return [];
+
+    try {
+        const response = await fetch('/notifications/data?action=display');
+        if (!response.ok) throw new Error('Failed to fetch notifications');
+        const notifications = await response.json(); // Expecting: ["text1", "text2", ...]
+
+        notificationList.innerHTML = '';
+        if (!Array.isArray(notifications) || notifications.length === 0) {
+            notificationList.innerHTML = `<div class="no-notifications">No notifications</div>`;
+        } else {
+            notifications.forEach((text, idx) => {
+                const notificationItem = document.createElement('div');
+                notificationItem.className = 'notification-item notification-info';
+                notificationItem.innerHTML = `
+                    <div class="notification-message">${text}</div>
+                `;
+                notificationList.appendChild(notificationItem);
+            });
+        }
+        // For badge logic, treat all as unread
+        return notifications;
+    } catch (error) {
+        notificationList.innerHTML = `<div class="no-notifications">Failed to load notifications</div>`;
+        return [];
+    }
+}
+
+// Show notification badge
+function showNotificationBadge(notifications) {
+    const notificationBadge = document.querySelector('.notification-badge');
+    if (!notificationBadge) return;
+    
+    const count = notifications.length;
+    if (count > 0) {
+        notificationBadge.textContent = count > 99 ? '99+' : count;
+        notificationBadge.style.display = 'flex';
+    } else {
+        notificationBadge.style.display = 'none';
+        notificationBadge.textContent = '';
+    }
+}
+
+// Add a new notification (can be called from other parts of the app)
+function addNotification(notification) {
+    if (!notification || !notification.message) return;
+    
+    // Create a new notification object
+    const newNotification = {
+        id: Date.now().toString(),
+        type: notification.type || 'info',
+        message: notification.message,
+        time: 'Just now',
+        details: notification.details || null,
+        read: false
+    };
+    
+    // Add to our notifications array
+    const notifications = window._notifications || [];
+    notifications.unshift(newNotification);
+    window._notifications = notifications;
+    
+    // Update UI
+    fetchAndRenderNotifications();
+    showNotificationBadge(notifications);
+    
+    // Play sound if panel is not open
+    if (!notificationPanelOpen) {
+        playNotificationSound();
+    }
+    
+    return newNotification.id;
+}

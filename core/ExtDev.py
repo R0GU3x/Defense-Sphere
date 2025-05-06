@@ -1,4 +1,5 @@
 import psutil, pyttsx3, time
+import core.Logs as Logs
 
 def _voice_alert(n):
     speech = f'{n} Unknown {'device' if n == 1 else 'devices'} detected!'
@@ -17,6 +18,7 @@ def run():
                 count += 1
         if count:
             _voice_alert(count)
+            Logs.write_log('#adminOnly', 'Foreign device detected!')
 
         time.sleep(2)
         

@@ -4,6 +4,20 @@
 
 Defense Sphere is a comprehensive cybersecurity framework designed to mitigate insider threats in enterprise environments. By integrating advanced features such as file integrity monitoring, facial recognition, phishing detection, and secure API endpoints, it ensures robust protection against unauthorized access and malicious activities. The framework emphasizes real-time monitoring, user-friendly interfaces, and adaptive security measures to safeguard enterprise systems effectively.
 
+## Visual Overview
+
+### Home Page
+![Defense Sphere Overview](/static/images/readme-assets/Picture3.png)
+
+### Admin Dashboard
+![Defense Sphere Overview](/static/images/readme-assets/Picture10.png)
+
+### File Integrity Monitoring System
+![Defense Sphere Overview](/static/images/readme-assets/Picture1.png)
+
+### Phishing Email Detector
+![Defense Sphere Overview](/static/images/readme-assets/Picture9.png)
+
 ## Features
 - **File Integrity Monitoring**
     - Real-time tracking of file changes to ensure system integrity.

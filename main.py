@@ -1,6 +1,5 @@
-from flask import Flask, render_template, redirect, jsonify, abort, request, make_response
-from requests_tor import RequestsTor
-import psutil, threading, requests, os, base64, time, socket
+from flask import Flask, render_template, redirect, jsonify, abort, request
+import psutil, threading, os, base64, time, socket
 import core.Auth as auth
 import core.FileIntegrity as FI
 import core.Validation as Validation
@@ -76,12 +75,12 @@ def login():
             f.write(face)
 
         if response == 0:
-            Logs.write_log(username, 'Login Successful')
+            Logs.write_log(username, 'Loggedin')
             return redirect('/face-recon')
         elif response == 1:
-            Logs.write_log(userID, 'Incorrect Password')
+            Logs.write_log(userID, 'Login attempt with wrong password')
         elif response == 2:
-            Logs.write_log(userID, 'Invalid UserID')
+            Logs.write_log(userID, 'Login attempt with invalid userid')
     
     if EMP_LOGGEDIN:
         return redirect('/dashboard')
@@ -140,7 +139,7 @@ def settings():
     else:
         return abort(403)
 
-notifications = list()
+notifications = []
 @app.route('/notifications/data', methods=['GET'])
 def notification_data():
     global notifications
@@ -407,7 +406,7 @@ def firewall_create_rule():
                                         remoteport=data['remotePort'], 
                                         protocol=data['protocol'])
             # response 0, 2, str<>
-            Logs.write_log(username, 'Firewall Rule Created')
+            Logs.write_log(username, f"Firewall Rule Created - {data['ruleName']}")
             return jsonify(response)
     else:
         return redirect('/login')
@@ -426,7 +425,7 @@ def firewall_delete_rule():
     if EMP_LOGGEDIN or ADMIN_LOGGEDIN:
         ruleName = request.get_json()
         Firewall.delete(ruleName)
-        Logs.write_log(username, 'Firewall Rule Deleted')
+        Logs.write_log(username, f'Firewall Rule Deleted - {ruleName}')
         return jsonify(0)
     else:
         return redirect('/login')
@@ -497,6 +496,7 @@ def handle_emp_actions():
     # start the employee server
     Employee = ComSoc.Employee(admin_ip)
     threading.Thread(target=Employee.run).start()
+    Logs.write_log(username, 'Loggedin')
     # send message to admin about the login
     Employee.send_message(f'login: {username}')
 
@@ -539,6 +539,8 @@ def active_ips():
         return jsonify(data)
     else:
         return abort(403)
+
+
 
 if __name__ == '__main__':
 
